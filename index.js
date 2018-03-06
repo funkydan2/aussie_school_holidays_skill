@@ -38,12 +38,72 @@ alexaApp.intent('HolidayCheck', {
         'slots': {
             'DATE': 'AMAZON.DATE'
         },
-        'utterances': ['{is} {DATE} a holiday?']
+        'utterances': ['{is} {-|DATE} {a holiday}']
     },
     function(req, res) {
-        //get the slot
-        var date = new AmazonDateParser(req.slot('DATE'));
+      //get the slot
+      var prompt;
+      var today = new Date();
+
+      var aDate = new AmazonDateParser(req.slot('DATE'));
+  
+      var date = aDate.startDate;
+ 
+      var calCheck = new QSHHelper();
+  
+      return calCheck.isHoliday(date).then(function(holiday){
+
+        if (moment(date).isSame(today, 'day')){
+          if (holiday) {
+            prompt = "Good news, you're on holidays. Get out and play!";
+          }
+          else {
+            prompt = "Sorry. Time to pack your bag. You have to go to school"
+          }
+        }
+        else {
+          if (holiday) {
+            prompt = "Good news, " + date.toDateString() + " is a holiday.";
+          }
+          else {
+            prompt = "Sorry. " + date.toDateString() + " is a school day.";
+          }
+        }
+        res.say(prompt).shouldEndSession(true);
+      }).catch(function(err) {
+            console.log(err.statusCode);
+            prompt = 'An error occured. Please try again.';
+            var reprompt = "Please ask about school holidays.";
+            res.say(prompt).reprompt(reprompt).shouldEndSession(false).send();
+      });
 });
+
+alexaApp.intent('HowLong', {
+        'utterances': ['{How long until|When are} {the} {|next} {holiday|holidays}']
+    },
+    function(req, res) {
+      
+      var prompt;
+      var today = new Date();
+  
+      var calCheck = new QSHHelper();
+      
+      return calCheck.nextHoliday(today).then(function(weeks){
+        
+        if (weeks < 0) {
+          prompt = "Hmm, aren't you on holidays now?";
+        }
+        else if (weeks > 1) {
+          prompt = "There are " + weeks + " weeks until the holidays.";
+        }
+        else {
+          prompt = "Almost there, holidays start this week!";
+        }
+        
+        res.say(prompt).shouldEndSession(true);
+      });
+});
+
 
 
 alexaApp.intent("AMAZON.StopIntent", {
