@@ -38,7 +38,7 @@ alexaApp.intent('HolidayCheck', {
         'slots': {
             'DATE': 'AMAZON.DATE'
         },
-        'utterances': ['{is} {-|DATE} {a holiday}']
+        'utterances': ['{is} {-|DATE} {a} {holiday|school day}']
     },
     function(req, res) {
       //get the slot
@@ -58,7 +58,7 @@ alexaApp.intent('HolidayCheck', {
             prompt = "Good news, you're on holidays. Get out and play!";
           }
           else {
-            prompt = "Sorry. Time to pack your bag. You have to go to school"
+            prompt = "It's on! Time to pack your bag. You have to go to school"
           }
         }
         else {
@@ -66,7 +66,7 @@ alexaApp.intent('HolidayCheck', {
             prompt = "Good news, " + date.toDateString() + " is a holiday.";
           }
           else {
-            prompt = "Sorry. " + date.toDateString() + " is a school day.";
+            prompt = "I'm sorry to say. " + date.toDateString() + " is a school day.";
           }
         }
         res.say(prompt).shouldEndSession(true);
@@ -88,16 +88,19 @@ alexaApp.intent('HowLong', {
   
       var calCheck = new QSHHelper();
       
-      return calCheck.nextHoliday(today).then(function(weeks){
+      return calCheck.nextHoliday(today).then(function(days){
         
-        if (weeks < 0) {
+        if (days < 0) {
           prompt = "Hmm, aren't you on holidays now?";
         }
-        else if (weeks > 1) {
-          prompt = "There are " + weeks + " weeks until the holidays.";
+        else if (days > 14) {
+          prompt = "There are " + Math.floor(days/7) + " weeks until the holidays.";
+        }
+        else if (days > 7) {
+          prompt = "There are only " + days + " days until the holidays. You're going to make it!";
         }
         else {
-          prompt = "Almost there, holidays start this week!";
+          prompt = "Almost there. Only " + days + " until the holidays. I can almost taste the freedom!";
         }
         
         res.say(prompt).shouldEndSession(true);

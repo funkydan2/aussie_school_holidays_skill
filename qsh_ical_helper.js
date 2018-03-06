@@ -215,8 +215,8 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
       }
 
       nextHoliday = moment(nextHoliday).add(1, 'days');
-      var weeks = moment(nextHoliday).diff(date, 'weeks');
-      resolve(weeks);
+      var days = moment(nextHoliday).diff(date, 'days');
+      resolve(days);
       return;
     }).catch(function(error) {
       console.log("Failed: ", error);
