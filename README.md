@@ -1,2 +1,2 @@
-# qld-school-holiday-skill
-Alexa Skill to answer questions about school holidays.
+Queensland School Holidays Alexa Skill (development)
+=========================
