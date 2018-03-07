@@ -7,7 +7,7 @@ dependencies:
   express: 4.16.2
   ical: 0.5.0
   lodash: 4.17.5
-  mocha: 5.0.1
+  mocha: 5.0.3
   moments: 0.0.2
 packages:
   /@types/chai-as-promised/7.1.0:
@@ -415,10 +415,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-eEp5eRWjjq0nutRWtVcstLuqeME=
-  /browser-stdout/1.3.0:
+  /browser-stdout/1.3.1:
     dev: false
     resolution:
-      integrity: sha1-81HTKWnTL6XXpVZxVCY9korjvR8=
+      integrity: sha512-qhAVI1+Av2X7qelOfAIYwXONood6XlZE/fXaBSmW/T5SzLAmCgzi+eiWE7fUvbHaeNBQH13UftjpXxsfLkMpgw==
   /bytes/3.0.0:
     dev: false
     engines:
@@ -718,12 +718,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-H6PmeeUcZloWtdt4DAkFyzFL94arpHr3NOwwmVILFiy+9Qd4JTxxXrzfyGk/lmct2qVGBwTSwSXagqu2BxmWig==
-  /diff/3.3.1:
+  /diff/3.5.0:
     dev: false
     engines:
       node: '>=0.3.1'
     resolution:
-      integrity: sha512-MKPHZDMB0o6yHyDryUOScqZibp914ksXwAMYMTHj6KO8UeKsRYNJD3oNCKjTqZon+V488P7N/HzXF8t7ZR95ww==
+      integrity: sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==
   /duplexify/3.5.4:
     dependencies:
       end-of-stream: 1.4.1
@@ -1604,12 +1604,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
-  /mocha/5.0.1:
+  /mocha/5.0.3:
     dependencies:
-      browser-stdout: 1.3.0
+      browser-stdout: 1.3.1
       commander: 2.11.0
       debug: 3.1.0
-      diff: 3.3.1
+      diff: 3.5.0
       escape-string-regexp: 1.0.5
       glob: 7.1.2
       growl: 1.10.3
@@ -1620,7 +1620,7 @@ packages:
     engines:
       node: '>= 4.0.0'
     resolution:
-      integrity: sha512-SpwyojlnE/WRBNGtvJSNfllfm5PqEDFxcWluSIgLeSBJtXG4DmoX2NNAeEA7rP5kK+79VgtVq8nG6HskaL1ykg==
+      integrity: sha512-oi0ylWkmIR+IG8OcQkLGPMWhxu/Gfz9EBW7Mztr6FY4JbrPDDi5y9rb2ncNnajZtr2XHfBP+G5pzS6gEzdAcVQ==
   /moment/2.21.0:
     dev: false
     resolution:
@@ -2585,5 +2585,5 @@ specifiers:
   express: ^4.16.2
   ical: ^0.5.0
   lodash: ^4.17.5
-  mocha: ^5.0.1
+  mocha: ^5.0.3
   moments: 0.0.2
