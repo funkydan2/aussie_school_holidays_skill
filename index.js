@@ -4,12 +4,12 @@ var _ = require('lodash');
 var express = require('express');
 var alexa = require('alexa-app');
 var moment = require('moment');
+var AmazonDateParser = require('amazon-date-parser');
 
 var app = express();
 
 // Setup the alexa app and attach it to express before anything else.
 var alexaApp = new alexa.app('');
-var AmazonDateParser = require('amazon-date-parser');
 
 //My Helper Objects
 var QSHHelper = require('./qsh_ical_helper');
@@ -29,8 +29,8 @@ app.set("view engine", "ejs");
 
 alexaApp.launch(function(req, res) {
     var prompt = 'Welcome to the Queensland School Holidays Skill. ';
-    prompt += 'You can say something like <emphasis level="moderate">is today a school day?</emphasis> or ';
-    prompt += '<emphasis level="moderate">how long until the holidays?</emphasis>';
+    prompt += 'You can say something like, "is today a school day?" or, ';
+    prompt += '"how long until the holidays?"';
     res.say(prompt).reprompt(prompt).shouldEndSession(false);
 });
 
@@ -38,17 +38,24 @@ alexaApp.intent('HolidayCheck', {
         'slots': {
             'DATE': 'AMAZON.DATE'
         },
-        'utterances': ['{is} {-|DATE} {a holiday}']
+        'utterances': ['{is} {-|DATE} {a} {holiday|school day}']
     },
     function(req, res) {
       //get the slot
-      var prompt;
+      var prompt, reprompt;
       var today = new Date();
-
+      
+      if (!_.isUndefined(req.slot('DATE')) || _.isEmpty(req.slot('DATE'))) {
+        prompt = 'To find out about holidays you need to tell me a date. ';
+        prompt += 'Say something like is <emphasis level="strong">tomorrow</emphasis> a school day?';
+        reprompt = "Please ask me about Queensland school holidays.";
+        res.say(prompt).reprompt(reprompt).shouldEndSession(false).send();      
+        return;
+      }
+      
       var aDate = new AmazonDateParser(req.slot('DATE'));
-  
       var date = aDate.startDate;
- 
+      
       var calCheck = new QSHHelper();
   
       return calCheck.isHoliday(date).then(function(holiday){
@@ -58,7 +65,7 @@ alexaApp.intent('HolidayCheck', {
             prompt = "Good news, you're on holidays. Get out and play!";
           }
           else {
-            prompt = "Sorry. Time to pack your bag. You have to go to school"
+            prompt = "It's on! Time to pack your bag. You have to go to school"
           }
         }
         else {
@@ -66,14 +73,14 @@ alexaApp.intent('HolidayCheck', {
             prompt = "Good news, " + date.toDateString() + " is a holiday.";
           }
           else {
-            prompt = "Sorry. " + date.toDateString() + " is a school day.";
+            prompt = "I'm sorry to say, " + date.toDateString() + " is a school day.";
           }
         }
         res.say(prompt).shouldEndSession(true);
       }).catch(function(err) {
             console.log(err.statusCode);
             prompt = 'An error occured. Please try again.';
-            var reprompt = "Please ask about school holidays.";
+            reprompt = "Please ask me about school holidays.";
             res.say(prompt).reprompt(reprompt).shouldEndSession(false).send();
       });
 });
@@ -88,23 +95,37 @@ alexaApp.intent('HowLong', {
   
       var calCheck = new QSHHelper();
       
-      return calCheck.nextHoliday(today).then(function(weeks){
+      return calCheck.nextHoliday(today).then(function(days){
         
-        if (weeks < 0) {
+        if (days < 0) {
           prompt = "Hmm, aren't you on holidays now?";
         }
-        else if (weeks > 1) {
-          prompt = "There are " + weeks + " weeks until the holidays.";
+        else if (days > 14) {
+          prompt = "There are " + Math.floor(days/7) + " weeks until the holidays.";
+        }
+        else if (days > 7) {
+          prompt = "There are only " + days + " days until the holidays. You're going to make it!";
         }
         else {
-          prompt = "Almost there, holidays start this week!";
+          prompt = "Almost there. Only " + days + " until the holidays. I can almost taste the freedom!";
         }
         
         res.say(prompt).shouldEndSession(true);
       });
 });
 
+alexaApp.intent("AMAZON.HelpIntent", {
+  "slots": {},
+  "utterances": {}
+}, function(req, res) {
+    var prompt = 'This is the Queensland School Holidays Skill. ';
+    prompt += 'You can ask "is today a school day?" or, ';
+    prompt += '"how long until the holidays?"';
+  
+    var reprompt = "What would you like to do?";
 
+    res.say(prompt).reprompt(reprompt).shouldEndSession(false);
+});
 
 alexaApp.intent("AMAZON.StopIntent", {
     "slots": {},
