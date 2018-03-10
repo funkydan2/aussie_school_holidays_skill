@@ -47,7 +47,7 @@ function getPrePostEvents(cal, date) {
       if (moment(e.start).isSameOrBefore(date, 'day')) {
         if (_.isUndefined(preEvent)) {
           preEvent = e;
-        } else if (e.start > preEvent.start) {
+        } else if (moment(e.start).isAfter(preEvent.start)) {
           preEvent = e;
         }
       }
@@ -121,7 +121,7 @@ QSH_iCal_Helper.prototype.isHoliday = function(date) {
 
 
     //Easy one first. If it's a weekend, return true!
-    var weekend = (date.getDay() == 0 || date.getDay() == 6);
+    var weekend = (moment(date).day() == 0 || moment(date).day() == 6);
 
     //Next, if date is a public holiday, return true!
     var publicHol = getCalendar(HolCal).then(function(cal) {

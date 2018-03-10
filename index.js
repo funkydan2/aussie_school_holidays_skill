@@ -4,6 +4,7 @@ var _ = require('lodash');
 var express = require('express');
 var alexa = require('alexa-app');
 var moment = require('moment');
+require('moment-timezone');
 var AmazonDateParser = require('amazon-date-parser');
 
 var app = express();
@@ -43,9 +44,9 @@ alexaApp.intent('HolidayCheck', {
     function(req, res) {
       //get the slot
       var prompt, reprompt;
-      var today = new Date();
+      var today = moment().tz('Australia/Brisbane');
       
-      if (!_.isUndefined(req.slot('DATE')) || _.isEmpty(req.slot('DATE'))) {
+      if (_.isUndefined(req.slot('DATE')) || _.isEmpty(req.slot('DATE'))) {
         prompt = 'To find out about holidays you need to tell me a date. ';
         prompt += 'Say something like is <emphasis level="strong">tomorrow</emphasis> a school day?';
         reprompt = "Please ask me about Queensland school holidays.";
@@ -54,13 +55,13 @@ alexaApp.intent('HolidayCheck', {
       }
       
       var aDate = new AmazonDateParser(req.slot('DATE'));
-      var date = aDate.startDate;
+      var date = moment(aDate.startDate).tz('Australia/Brisbane');
       
       var calCheck = new QSHHelper();
   
       return calCheck.isHoliday(date).then(function(holiday){
 
-        if (moment(date).isSame(today, 'day')){
+        if (moment(today).isSame(date, 'day')){
           if (holiday) {
             prompt = "Good news, you're on holidays. Get out and play!";
           }
@@ -70,10 +71,10 @@ alexaApp.intent('HolidayCheck', {
         }
         else {
           if (holiday) {
-            prompt = "Good news, " + date.toDateString() + " is a holiday.";
+            prompt = "Good news, " + moment(date).format("dddd, MMMM Do YYYY") + " is not a school day.";
           }
           else {
-            prompt = "I'm sorry to say, " + date.toDateString() + " is a school day.";
+            prompt = "I'm sorry to say, " + moment(date).format("dddd, MMMM Do YYYY") + " is a school day.";
           }
         }
         res.say(prompt).shouldEndSession(true);
@@ -91,7 +92,7 @@ alexaApp.intent('HowLong', {
     function(req, res) {
       
       var prompt;
-      var today = new Date();
+      var today = moment().tz('Australia/Brisbane');
   
       var calCheck = new QSHHelper();
       
