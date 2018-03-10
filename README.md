@@ -1,4 +1,24 @@
 Queensland School Holidays Alexa Skill
 =========================
 
-Using publically accessible data from the Qld Government (used under CC By 4.0 license) and a QLD Public Holidays iCal file, this skill allows users to ask whether a particular day is a holiday, or how long until the end of the next term.
+Using publicly accessible data this skill allows users to ask whether a particular day is a holiday, or how long until the end of the next term.
+
+Data is from:
+* Qld Government (used under CC By 4.0 license)
+* NSW Government (used under CC By 4.0 license)
+* http://public-holidays.dteoh.com
+
+
+To-Do
+----------------------
+* Cache the iCal files!
+  * https://stackoverflow.com/questions/7559555/last-modified-file-date-in-node-js
+  * Need to do this manually.
+* Incorporate NSW
+  * Write the helper object
+* Store user's location
+  * use SQLite database.
+  * need to learn how to do 'onboarding'
+* For QLD:
+  * More cute responses
+  * Deal with the staggered year ending for grades 10-12

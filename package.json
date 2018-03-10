@@ -1,8 +1,7 @@
 {
-  "name": "qld-school-cal",
-  "version": "0.0.1",
-  "description": "Responds to queries to the QLD Public School iCal",
-  "main": "qsh-helper.js",
+  "name": "aus-school-cal",
+  "version": "0.0.2",
+  "description": "Alexa skill with information about school holidays.",
   "scripts": {
     "test": "mocha",
     "start": "node index.js"
@@ -13,15 +12,17 @@
   "author": "Daniel Saunders",
   "license": "MIT",
   "dependencies": {
+    "alexa-app": "^4.2.1",
+    "amazon-date-parser": "^0.2.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "http-request": "^0.7.0",
     "ical": "^0.5.0",
     "lodash": "^4.17.5",
-    "mocha": "^5.0.3",
-    "moments": "0.0.2",
-    "express": "^4.16.2",
-    "ejs": "^2.5.7",
-    "alexa-app": "^4.2.1",
-    "amazon-date-parser": "^0.2.0"
+    "mocha": "^5.0.4",
+    "moment": "^2.21.0",
+    "moment-timezone": "^0.5.14"
   }
 }

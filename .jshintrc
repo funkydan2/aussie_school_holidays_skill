@@ -1,0 +1,7 @@
+{
+  "esversion": 6,
+  "node": true,
+  "mocha": true,
+  "strict": false,
+  "indent": 1
+}
