@@ -1,4 +1,5 @@
 npm_modules
+node_modules
 .npm
 bower_components
 trash
@@ -8,6 +9,6 @@ Error.log
 .tmp
 .rvmrc
 .trashes
-*.pxm
 .data
+.config
 *~
