@@ -49,48 +49,31 @@ function getPrePostEvents(cal, date) {
   };
 }
 
-function getTermBoundaries(date) {
+function getNextHoliday(date) {
   return new Promise(function(resolve, reject) {
-    var preBoundary, postBoundary;
+    var holRE = new RegExp("holiday", "i");
+    var nextHoliday;
 
-    getCalendar("school")
+    var cc = new cached_calendar();
+
+    cc
+      .getCalendar("NSW", "school")
       .then(function(calendar) {
         for (var key in calendar) {
           if (calendar.hasOwnProperty(key)) {
             var e = calendar[key];
-            var termRE = RegExp("^term", "i");
-            if (termRE.test(e.summary.val)) {
-              if (moment(e.start).isSameOrBefore(date, "day")) {
-                if (
-                  (_.isUndefined(preBoundary) ||
-                    moment(preBoundary.start).isBefore(e.start),
-                  "day")
-                ) {
-                  preBoundary = e;
-                }
-              }
+            if (holRE.test(e.summary)) {
               if (moment(e.start).isSameOrAfter(date, "day")) {
-                if (
-                  _.isUndefined(postBoundary) ||
-                  moment(postBoundary.start).isAfter(e.start, "day")
-                ) {
-                  postBoundary = e;
+                if (_.isUndefined(nextHoliday)) {
+                  nextHoliday = e.start;
+                } else if (moment(e.start).isBefore(nextHoliday)) {
+                  nextHoliday = e.start;
                 }
               }
             }
           }
         }
-
-        if (_.isUndefined(preBoundary) || _.isUndefined(postBoundary)) {
-          reject(new Error("undefined"));
-          return;
-        } else {
-          resolve({
-            pre: preBoundary,
-            post: postBoundary
-          });
-          return;
-        }
+        resolve(nextHoliday);
       })
       .catch(function(error) {
         console.log("Failed: ", error);
@@ -100,21 +83,49 @@ function getTermBoundaries(date) {
   });
 }
 
-function QSH_iCal_Helper() {}
+function getToday(date) {
+  return new Promise(function(resolve, reject) {
+    var dateEvents = [];
+    //This function returns an array with all the events on date.
+    let cc = new cached_calendar();
 
-QSH_iCal_Helper.prototype.isHoliday = function(date) {
+    cc
+      .getCalendar("NSW", "school")
+      .then(function(calendar) {
+        for (var key in calendar) {
+          if (calendar.hasOwnProperty(key)) {
+            let e = calendar[key];
+
+            if (moment(date).isBetween(e.start, e.end)) {
+              dateEvents.push(e.summary);
+            }
+          }
+        }
+        resolve(dateEvents);
+      })
+      .catch(function(error) {
+        console.log("Failed: ", error);
+        reject(error);
+        return;
+      });
+  });
+}
+
+function NSW_iCal_Helper() {}
+
+NSW_iCal_Helper.prototype.isHoliday = function(date) {
   //Returns Promise of a boolean.
   //Resolves 'true' if date is a holiday.
-  var termRE = new RegExp("term", "i");
-  var studentFreeRE = new RegExp("student free", "i");
-  var termStartRE = new RegExp("(starts|begins)", "i");
-  var termEndRE = new RegExp("(ends|finishes)", "i");
+  var termRE = new RegExp("term.+students.+", "i");
+  var holRE = new RegExp("holiday", "i");
+
+  var cc = new cached_calendar();
 
   //Easy one first. If it's a weekend, return true!
   var weekend = moment(date).day() == 0 || moment(date).day() == 6;
 
   //Next, if date is a public holiday, return true!
-  var publicHol = getCalendar("public").then(function(cal) {
+  var publicHol = cc.getCalendar("NSW", "public").then(function(cal) {
     var events = getPrePostEvents(cal, date);
 
     var event = events.pre;
@@ -126,59 +137,25 @@ QSH_iCal_Helper.prototype.isHoliday = function(date) {
     }
   });
 
-  //Now check for Student Free Days
-  var studentFree = getCalendar("school")
-    .then(function(cal) {
-      return getPrePostEvents(cal, date);
-    })
-    .then(function(events) {
-      var preEvent = events.pre;
-      var postEvent = events.post;
-
-      var preTitle = preEvent.summary.val;
-      var postTitle = postEvent.summary.val;
-
-      if (moment(preEvent.start).isSame(date, "day")) {
-        console.log(preTitle);
-        if (studentFreeRE.test(preTitle)) {
-          //date is a Student Free Day
-          return true;
-        }
-        if (termRE.test(preTitle)) {
-          //The given day is labelled as either first or last of term
-          console.log(date, " is first or last day of term.");
-          return false;
-        }
-      } else {
+  var holidayTime = getToday(date).then(function(events) {
+    //Now check whether DATE is inside or outside of term boundaries
+    for (var i = 0; i < events.length; i++) {
+      if (holRE.test(events[i])) {
+        return true;
+      } else if (termRE.test(events[i])) {
         return false;
       }
-    });
-
-  var termTime = getTermBoundaries(date).then(function(b) {
-    //Now check whether DATE is inside or outside of term boundaries
-    var preTitle = b.pre.summary.val;
-    var postTitle = b.post.summary.val;
-    if (termStartRE.test(preTitle) && termEndRE.test(postTitle)) {
-      //It's term time.
-      return false;
-    } else if (termEndRE.test(preTitle) && termStartRE.test(postTitle)) {
-      //Holiday time!
-      return true;
-    } else {
-      return false;
     }
   });
 
   return new Promise(function(resolve, reject) {
-    Promise.all([weekend, publicHol, studentFree, termTime])
+    Promise.all([weekend, publicHol, holidayTime])
       .then(function(values) {
         if (values[0]) {
           resolve(true);
         } else if (values[1]) {
           resolve(true);
         } else if (values[2]) {
-          resolve(true);
-        } else if (values[3]) {
           resolve(true);
         } else {
           resolve(false);
@@ -193,36 +170,21 @@ QSH_iCal_Helper.prototype.isHoliday = function(date) {
   });
 };
 
-QSH_iCal_Helper.prototype.nextHoliday = function(date) {
+NSW_iCal_Helper.prototype.nextHoliday = function(date) {
   //Returns the promise of a real number
   //Number is the time (in decimal weeks) until the next holidays
   //If date is during a holiday, it will still give the *next*
   return new Promise(function(resolve, reject) {
-    getTermBoundaries(date)
-      .then(function(bounds) {
-        var nextHoliday;
-        var preTitle = bounds.pre.summary.val;
-        var postTitle = bounds.post.summary.val;
-        var termEndsRE = new RegExp("(end|finish)", "i");
-
-        if (termEndsRE.test(preTitle)) {
-          resolve(-1); //It's holidays now!
-          return;
-        } else if (termEndsRE.test(postTitle)) {
-          nextHoliday = bounds.post.start;
-        }
-
-        nextHoliday = moment(nextHoliday).add(1, "days");
-        var days = moment(nextHoliday).diff(date, "days");
+    getNextHoliday(date)
+      .then(function(holiday) {
+        var days = moment(holiday).diff(date, "days");
         resolve(days);
-        return;
       })
       .catch(function(error) {
         console.log("Failed: ", error);
         reject(error);
-        return;
       });
   });
 };
 
-module.exports = QSH_iCal_Helper;
+module.exports = NSW_iCal_Helper;

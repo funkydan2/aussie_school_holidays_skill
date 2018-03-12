@@ -3,11 +3,11 @@ var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 var expect = chai.expect;
-var QSH_iCal_Helper = require("../qld_ical_helper");
+var NSW_iCal_Helper = require("../NSW_ical_helper");
 chai.config.includeStack = true;
 
-describe("QSH iCal Helper", function() {
-  var subject = new QSH_iCal_Helper();
+describe("NSW iCal Helper", function() {
+  var subject = new NSW_iCal_Helper();
   describe("#Saturday", function() {
     context("from date()", function() {
       it("returns true", function() {
@@ -25,38 +25,38 @@ describe("QSH iCal Helper", function() {
     });
   });
   describe("#Holidays", function() {
-    context("from the QLD School Holidays iCal", function() {
-      it("April 1 returns true", function() {
-        var d = new Date("2018-04-11");
+    context("from the NSW School Holidays iCal", function() {
+      it("January 29 returns true", function() {
+        var d = new Date("2018-01-29");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
-      it("April 9 returns true", function() {
-        var d = new Date("2018-04-09");
+      it("April 16 returns true", function() {
+        var d = new Date("2018-04-16");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
-      it("July 3 returns true", function() {
-        var d = new Date("2018-07-03");
+      it("July 10 returns true", function() {
+        var d = new Date("2018-07-10");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
     });
   });
   describe("#SchoolDays", function() {
-    context("from the QLD School Holidays iCal", function() {
+    context("from the NSW School Holidays iCal", function() {
       it("March 29 returns false", function() {
         var d = new Date("2018-03-29");
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
-      it("July 16 returns false", function() {
-        var d = new Date("2018-07-16");
+      it("July 24 returns false", function() {
+        var d = new Date("2018-07-24");
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
     });
   });
   describe("#UntilHolidays", function() {
-    context("from March 8 2018", function() {
-      it("returns 21", function() {
-        var d = new Date("2018-03-08");
-        return expect(subject.nextHoliday(d)).to.eventually.equal(21);
+    context("from July 2 2018", function() {
+      it("returns 6", function() {
+        var d = new Date("2018-07-02");
+        return expect(subject.nextHoliday(d)).to.eventually.equal(6);
       });
     });
   });

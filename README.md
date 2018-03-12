@@ -11,11 +11,15 @@ Data is from:
 
 To-Do
 ----------------------
-* Incorporate NSW
-  * Write the helper object
 * Store user's location
   * use SQLite database.
   * need to learn how to do 'onboarding'
 * For QLD:
-  * More cute responses
   * Deal with the staggered year ending for grades 10-12
+* For NSW:
+  * Deal with 'eastern' and 'western' regions!
+* Incorporate Victoria
+  * https://www.vic.gov.au/calendar.html
+  * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics
+  * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-PublicHolidays.ics
+* More fun responses!
