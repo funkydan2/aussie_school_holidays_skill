@@ -11,9 +11,6 @@ Data is from:
 
 To-Do
 ----------------------
-* Cache the iCal files!
-  * https://stackoverflow.com/questions/7559555/last-modified-file-date-in-node-js
-  * Need to do this manually.
 * Incorporate NSW
   * Write the helper object
 * Store user's location
