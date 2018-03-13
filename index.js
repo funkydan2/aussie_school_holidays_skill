@@ -13,7 +13,9 @@ var app = express();
 var alexaApp = new alexa.app("");
 
 //My Helper Objects
-var QSHHelper = require("./qld_ical_helper");
+var QLDHelper = require("./qld_ical_helper");
+var NSWHelper = require("./nsw_ical_helper");
+var DBHelper = require("./userdb_helper.js");
 
 const PORT = process.env.PORT || 3000;
 
@@ -29,14 +31,45 @@ alexaApp.express({
 app.set("view engine", "ejs");
 
 alexaApp.launch(function(req, res) {
-  var prompt = "Welcome to the Queensland School Holidays Skill. ";
+  var prompt = "Welcome to the Aussie School Holidays Skill. ";
   prompt += 'You can say something like, "is today a school day?" or, ';
   prompt += '"how long until the holidays?"';
-  res
-    .say(prompt)
-    .reprompt(prompt)
-    .shouldEndSession(false);
+
+  var firstTimePrompt = "Welcome to the Aussie School Holidays Skill. ";
+  firstTimePrompt += "To get started I need to know which state you are in. ";
+  firstTimePrompt += "Please say, 'set state'.";
+
+  var firstTimeRePrompt = "To setup this skill, please say, 'set state'.";
+
+  let db = new DBHelper();
+
+  if (db.userExists) {
+    res
+      .say(prompt)
+      .reprompt(prompt)
+      .shouldEndSession(false);
+  }
+  else {
+    res
+      .say(firstTimePrompt)
+      .reprompt(firstTimeRePrompt)
+      .shouldEndSession(false);
+  }
 });
+
+/*
+Need a 'set state' intent.
+It'll be a 'dialog' function where Alexa asks the user for a state slot
+and then saves it to the database
+https://developer.amazon.com/docs/custom-skills/dialog-interface-reference.html#dialog-reqs
+https://github.com/alexa-js/alexa-app#dialog
+*/
+
+/*
+Need a 'change state' intent.
+It'll be a 'dialog' intent where Alexa asks for a new start
+and then saves it to the database
+*/
 
 alexaApp.intent(
   "HolidayCheck",
@@ -49,6 +82,13 @@ alexaApp.intent(
   function(req, res) {
     //get the slot
     var prompt, reprompt;
+
+    /*
+    First - check if user is in the database.
+    If they aren't, ask them to call the 'set state' intent
+    */
+
+
     var today = moment().tz("Australia/Brisbane");
 
     if (_.isUndefined(req.slot("DATE")) || _.isEmpty(req.slot("DATE"))) {
@@ -67,7 +107,7 @@ alexaApp.intent(
     var aDate = new AmazonDateParser(req.slot("DATE"));
     var date = moment(aDate.startDate).tz("Australia/Brisbane");
 
-    var calCheck = new QSHHelper();
+    var calCheck = new QLDHelper();
 
     return calCheck
       .isHoliday(date)
@@ -115,7 +155,7 @@ alexaApp.intent(
     var prompt;
     var today = moment().tz("Australia/Brisbane");
 
-    var calCheck = new QSHHelper();
+    var calCheck = new QLDHelper();
 
     return calCheck.nextHoliday(today).then(function(days) {
       if (days < 0) {
@@ -147,7 +187,8 @@ alexaApp.intent(
     utterances: {}
   },
   function(req, res) {
-    var prompt = "This is the Queensland School Holidays Skill. ";
+    var prompt = "This is the Aussie School Holidays Skill. ";
+    prompt += "To change the state say 'change state'. ";
     prompt += 'You can ask "is today a school day?" or, ';
     prompt += '"how long until the holidays?"';
 

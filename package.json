@@ -23,6 +23,7 @@
     "lodash": "^4.17.5",
     "mocha": "^5.0.4",
     "moment": "^2.21.0",
-    "moment-timezone": "^0.5.14"
+    "moment-timezone": "^0.5.14",
+    "sqlite3": "^3.1.13"
   }
 }

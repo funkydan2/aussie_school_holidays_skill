@@ -1,4 +1,3 @@
-/*
 "use strict";
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
@@ -62,4 +61,3 @@ describe("QSH iCal Helper", function() {
     });
   });
 });
-*/
