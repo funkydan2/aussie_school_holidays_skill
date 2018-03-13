@@ -43,13 +43,12 @@ alexaApp.launch(function(req, res) {
 
   let db = new DBHelper();
 
-  if (db.userExists) {
+  if (db.userExists(req.user.userId)) {
     res
       .say(prompt)
       .reprompt(prompt)
       .shouldEndSession(false);
-  }
-  else {
+  } else {
     res
       .say(firstTimePrompt)
       .reprompt(firstTimeRePrompt)
@@ -81,16 +80,29 @@ alexaApp.intent(
   },
   function(req, res) {
     //get the slot
-    var prompt, reprompt;
+    let prompt, reprompt;
 
     /*
     First - check if user is in the database.
     If they aren't, ask them to call the 'set state' intent
     */
 
+    let db = new DBHelper();
 
-    var today = moment().tz("Australia/Brisbane");
+    if (!db.userExists(req.userId)) {
+      prompt = `It looks like this is the first time you've used this skill.
+                To get started, you need to let me know which state you're in.
+                Say 'Set State' to get started.`;
+      reprompt = "Say 'Set State' to get started.";
+      res
+        .say(prompt)
+        .reprompt(reprompt)
+        .shouldEndSession(false)
+        .send();
+      return;
+    }
 
+    //Check whether the DATE slot was passed in.
     if (_.isUndefined(req.slot("DATE")) || _.isEmpty(req.slot("DATE"))) {
       prompt = "To find out about holidays you need to tell me a date. ";
       prompt +=
@@ -104,45 +116,95 @@ alexaApp.intent(
       return;
     }
 
-    var aDate = new AmazonDateParser(req.slot("DATE"));
-    var date = moment(aDate.startDate).tz("Australia/Brisbane");
+    let state = db.getState(req.userId);
 
-    var calCheck = new QLDHelper();
+    if (state == "QLD") {
+      let today = moment().tz("Australia/Brisbane");
 
-    return calCheck
-      .isHoliday(date)
-      .then(function(holiday) {
-        if (moment(today).isSame(date, "day")) {
-          if (holiday) {
-            prompt = "Good news, you're on holidays. Get out and play!";
+      let aDate = new AmazonDateParser(req.slot("DATE"));
+      let date = moment(aDate.startDate).tz("Australia/Brisbane");
+
+      let calCheck = new QLDHelper();
+
+      return calCheck
+        .isHoliday(date)
+        .then(function(holiday) {
+          if (moment(today).isSame(date, "day")) {
+            if (holiday) {
+              prompt = "Good news, you're on holidays. Get out and play!";
+            } else {
+              prompt =
+                "It's on! Time to pack your bag. You have to go to school";
+            }
           } else {
-            prompt = "It's on! Time to pack your bag. You have to go to school";
+            if (holiday) {
+              prompt =
+                "Good news, " +
+                moment(date).format("dddd, MMMM Do YYYY") +
+                " is not a school day.";
+            } else {
+              prompt =
+                "I'm sorry to say, " +
+                moment(date).format("dddd, MMMM Do YYYY") +
+                " is a school day.";
+            }
           }
-        } else {
-          if (holiday) {
-            prompt =
-              "Good news, " +
-              moment(date).format("dddd, MMMM Do YYYY") +
-              " is not a school day.";
+          res.say(prompt).shouldEndSession(true);
+        })
+        .catch(function(err) {
+          console.log(err.statusCode);
+          prompt = "An error occured. Please try again.";
+          reprompt = "Please ask me about school holidays.";
+          res
+            .say(prompt)
+            .reprompt(reprompt)
+            .shouldEndSession(false)
+            .send();
+        });
+    } else if (state == "NSW"){
+      let today = moment().tz("Australia/Sydney");
+
+      let aDate = new AmazonDateParser(req.slot("DATE"));
+      let date = moment(aDate.startDate).tz("Australia/Sydney");
+
+      let calCheck = new NSWHelper();
+
+      return calCheck
+        .isHoliday(date)
+        .then(function(holiday) {
+          if (moment(today).isSame(date, "day")) {
+            if (holiday) {
+              prompt = "Good news, you're on holidays. Get out and play!";
+            } else {
+              prompt =
+                "It's on! Time to pack your bag. You have to go to school";
+            }
           } else {
-            prompt =
-              "I'm sorry to say, " +
-              moment(date).format("dddd, MMMM Do YYYY") +
-              " is a school day.";
+            if (holiday) {
+              prompt =
+                "Good news, " +
+                moment(date).format("dddd, MMMM Do YYYY") +
+                " is not a school day.";
+            } else {
+              prompt =
+                "I'm sorry to say, " +
+                moment(date).format("dddd, MMMM Do YYYY") +
+                " is a school day.";
+            }
           }
-        }
-        res.say(prompt).shouldEndSession(true);
-      })
-      .catch(function(err) {
-        console.log(err.statusCode);
-        prompt = "An error occured. Please try again.";
-        reprompt = "Please ask me about school holidays.";
-        res
-          .say(prompt)
-          .reprompt(reprompt)
-          .shouldEndSession(false)
-          .send();
-      });
+          res.say(prompt).shouldEndSession(true);
+        })
+        .catch(function(err) {
+          console.log(err.statusCode);
+          prompt = "An error occured. Please try again.";
+          reprompt = "Please ask me about school holidays.";
+          res
+            .say(prompt)
+            .reprompt(reprompt)
+            .shouldEndSession(false)
+            .send();
+        });
+    }
   }
 );
 
