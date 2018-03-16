@@ -11,9 +11,7 @@ Data is from:
 
 To-Do
 ----------------------
-* Store user's location
-  * use SQLite database.
-  * need to learn how to do 'onboarding'
+* need to learn how to do 'onboarding'
 * For QLD:
   * Deal with the staggered year ending for grades 10-12
 * For NSW:
