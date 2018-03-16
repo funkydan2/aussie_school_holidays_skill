@@ -87,32 +87,31 @@ alexaApp.intent(
       let db = new DBHelper();
       let stateID;
       let prompt;
-
-      switch (req.slot("STATE")) {
-        case "Queensland":
+      switch (req.slot("STATE").toLowerCase()) {
+        case "queensland":
           stateID = "QLD";
           break;
-        case "New South Wales":
-          stateID = "NSW-eastern";
+        case "new south wales":
+          stateID = "NSW";
           break;
-        case "Victoria":
+        case "victoria":
           stateID = "VIC";
           break;
-        case "Australian Capital Territoy":
+        case "australian capital territoy":
           stateID = "ACT";
           break;
-        case "South Australia":
+        case "south australia":
           stateID = "SA";
           break;
-        case "Northern Territory":
+        case "northern territory":
           stateID = "NT";
           break;
-        case "Western Australia":
+        case "western australia":
           stateID = "WA";
           break;
       }
 
-      if (stateID == "QLD" || stateID == "NSW") {
+      if (stateID == "QLD") {
         db.setState(req.userId, stateID).then(function() {
           prompt = "Your state is now " + req.slot("STATE") + ". ";
           prompt =
@@ -123,7 +122,23 @@ alexaApp.intent(
             .reprompt("Ask me about holidays.")
             .shouldEndSession(false)
             .send();
+        })
+        .catch(function(err) {
+          console.log(err.statusCode);
+          res
+            .say(errPrompt)
+            .reprompt(errRePrompt)
+            .shouldEndSession(false)
+            .send();
         });
+      } else if (stateID == "NSW") {
+          prompt = "For New South Wales users, we also need to set the region. ";
+          prompt += "Please say, 'set region to eastern' or 'set region to western'";
+          res
+            .say(prompt)
+            .reprompt("Please set your region.")
+            .shouldEndSession(false)
+            .send();
       } else {
         prompt = "<say-as interpret-as='interjection'>bummer</say-as>. ";
         prompt += "Currently I only know about holidays ";
@@ -137,6 +152,44 @@ alexaApp.intent(
     }
   }
 );
+
+alexaApp.intent(
+  "SetRegion",
+  {
+    dialog: { type: "delegate" },
+    utterances: ["{set} {region}"]
+  },
+  function(req, res) {
+    if (req.getDialog().isStarted() || req.getDialog().isInProgress()) {
+      req.getDialog().handleDialogDelegation();
+    } else if (req.getDialog().isCompleted()) {
+      let db = new DBHelper();
+      let stateRegion = "NSW-" + req.slot("REGION");
+      
+      console.log(stateRegion);
+      db.setState(req.userId, stateRegion).then(function() {
+        let prompt = "Your location has been stored. ";
+        prompt += "Your state is set to New South Wales ";
+        prompt += "and your region is set to " + req.slot("REGION") + ". ";  
+        prompt += "Now, ask me about holidays for your location.";
+        console.log(prompt);
+        res
+          .say(prompt)
+          .reprompt("Ask me about holidays.")
+          .shouldEndSession(false)
+          .send();
+        })
+        .catch(function(err) {
+        console.log(err.statusCode);
+        res
+          .say(errPrompt)
+          .reprompt(errRePrompt)
+          .shouldEndSession(false)
+          .send();
+      });
+    }
+  }
+)
 
 alexaApp.intent(
   "HolidayCheck",
