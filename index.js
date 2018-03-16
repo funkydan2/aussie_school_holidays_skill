@@ -112,7 +112,7 @@ alexaApp.intent(
       }
 
       if (stateID == "QLD") {
-        db
+        return db
           .setState(req.userId, stateID)
           .then(function() {
             prompt = "Your state is now " + req.slot("STATE") + ". ";
@@ -170,7 +170,7 @@ alexaApp.intent(
       let stateRegion = "NSW-" + req.slot("REGION");
 
       console.log(stateRegion);
-      db
+      return db
         .setState(req.userId, stateRegion)
         .then(function() {
           let prompt = "Your location has been stored. ";
