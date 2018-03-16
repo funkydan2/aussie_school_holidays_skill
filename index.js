@@ -19,7 +19,7 @@ var DBHelper = require("./userdb_helper.js");
 
 const PORT = process.env.PORT || 3000;
 
-const errPrompt = "An error occured. Please try again.";
+const errPrompt = "<say-as interpret-as='interjection'>bummer</say-as>, An error occured. Please try again.";
 const errRePrompt = "Please ask me about school holidays.";
 
 // POST calls to / in express will be handled by the app.request() function
@@ -34,11 +34,13 @@ alexaApp.express({
 app.set("view engine", "ejs");
 
 alexaApp.launch(function(req, res) {
-  var prompt = "Welcome to the Aussie School Holidays Skill. ";
+  var prompt = "<say-as interpret-as='interjection'>g'day</say-as>. ";
+  prompt += "Welcome to the Aussie School Holidays Skill. ";
   prompt += 'You can say something like, "is today a school day?" or, ';
   prompt += '"how long until the holidays?"';
 
-  var firstTimePrompt = "Welcome to the Aussie School Holidays Skill. ";
+  var firstTimePrompt = "<say-as interpret-as='interjection'>g'day</say-as>. ";
+  firstTimePrompt += "Welcome to the Aussie School Holidays Skill. ";
   firstTimePrompt += "To get started I need to know which state you are in. ";
   firstTimePrompt += "Please say, 'set state'.";
 
@@ -46,17 +48,22 @@ alexaApp.launch(function(req, res) {
 
   let db = new DBHelper();
 
-  if (db.userExists(req.user.userId)) {
-    res
-      .say(prompt)
-      .reprompt(prompt)
-      .shouldEndSession(false);
-  } else {
-    res
-      .say(firstTimePrompt)
-      .reprompt(firstTimeRePrompt)
-      .shouldEndSession(false);
-  }
+  
+  return db.getState(req.userId).then(function(state) {
+    if (state) {
+      res
+        .say(prompt)
+        .reprompt(prompt)
+        .shouldEndSession(false)
+        .send();
+    } else {
+      res
+        .say(firstTimePrompt)
+        .reprompt(firstTimeRePrompt)
+        .shouldEndSession(false)
+        .send();
+    }
+  });
 });
 
 /*
@@ -86,7 +93,7 @@ alexaApp.intent(
           stateID = "QLD";
           break;
         case "New South Wales":
-          stateID = "NSW";
+          stateID = "NSW-eastern";
           break;
         case "Victoria":
           stateID = "VIC";
@@ -106,16 +113,19 @@ alexaApp.intent(
       }
 
       if (stateID == "QLD" || stateID == "NSW") {
-        db.setState(req.session.userId, stateID);
-        prompt = "Your state is now " + req.slot("STATE") + ". ";
-        prompt += "You can now ask me about holidays for your state.";
-        res
-          .say(prompt)
-          .reprompt("Ask me about holidays.")
-          .shouldEndSession(false)
-          .send();
+        db.setState(req.userId, stateID).then(function(){
+          prompt = "Your state is now " + req.slot("STATE") + ". ";
+          prompt = "That's <say-as interpret-as='interjection'>awesome</say-as>! ";
+          prompt += "You can now ask me about holidays for your state.";
+          res
+            .say(prompt)
+            .reprompt("Ask me about holidays.")
+            .shouldEndSession(false)
+            .send();
+        });
       } else {
-        prompt = "Sorry. Currently I only know about holidays ";
+        prompt = "<say-as interpret-as='interjection'>bummer</say-as>. ";
+        prompt +=  "Currently I only know about holidays ";
         prompt += " in Queensland and New South Wales. ";
         prompt += "But I'm learning more every day!";
         res
@@ -155,7 +165,7 @@ alexaApp.intent(
     }
 
     return db
-      .getState(req.session.userId)
+      .getState(req.userId)
       .then(function(state) {
         if (_.isUndefined(state)) {
           prompt = `It looks like this is the first time you've used this skill.
@@ -237,7 +247,7 @@ alexaApp.intent(
     let db = new DBHelper();
 
     return db
-      .getState(req.session.userId)
+      .getState(req.userId)
       .then(function(state) {
         if (_.isUndefined(state)) {
           prompt = `It looks like this is the first time you've used this skill.
@@ -251,27 +261,20 @@ alexaApp.intent(
             .send();
           return;
         } else {
-          let today, aDate, date, calCheck;
+          let today, calCheck;
           if (state == "QLD") {
             today = moment().tz("Australia/Brisbane");
-
-            aDate = new AmazonDateParser(req.slot("DATE"));
-            date = moment(aDate.startDate).tz("Australia/Brisbane");
-
             calCheck = new QLDHelper();
           } else if (state.search("NSW") == 0) {
             today = moment().tz("Australia/Sydney");
 
-            aDate = new AmazonDateParser(req.slot("DATE"));
-            date = moment(aDate.startDate).tz("Australia/Sydney");
             if (state.search("east") >= 3) {
               calCheck = new NSWHelper("eastern");
             } else if (state.search("west") >= 3) {
               calCheck = new NSWHelper("western");
             }
           }
-        }
-
+           
         return calCheck.nextHoliday(today).then(function(days) {
           if (days < 0) {
             prompt = "Hmm, aren't you on holidays now?";
@@ -293,15 +296,16 @@ alexaApp.intent(
           }
           res.say(prompt).shouldEndSession(true);
         });
+        }
       })
       .catch(function(err) {
-        console.log(err.statusCode);
+        console.log("HowLong error ", err.statusCode);
         res
           .say(errPrompt)
           .reprompt(errRePrompt)
           .shouldEndSession(false)
           .send();
-      });
+    });
   }
 );
 

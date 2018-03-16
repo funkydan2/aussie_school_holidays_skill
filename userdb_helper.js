@@ -8,9 +8,6 @@ const db_file = ".data/users.db";
 function User_DB_Helper() {}
 
 User_DB_Helper.prototype.initDB = function() {
-  //I'm not sure when to run this?
-  //Maybe as part of an installation routine?
-  //or if an INSERT query throws an error?
   let db = new sqlite3.Database(db_file, err => {
     if (err) {
       return console.error(err.message);
