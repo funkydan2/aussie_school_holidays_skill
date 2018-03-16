@@ -19,7 +19,8 @@ var DBHelper = require("./userdb_helper.js");
 
 const PORT = process.env.PORT || 3000;
 
-const errPrompt = "<say-as interpret-as='interjection'>bummer</say-as>, An error occured. Please try again.";
+const errPrompt =
+  "<say-as interpret-as='interjection'>bummer</say-as>, An error occured. Please try again.";
 const errRePrompt = "Please ask me about school holidays.";
 
 // POST calls to / in express will be handled by the app.request() function
@@ -48,7 +49,6 @@ alexaApp.launch(function(req, res) {
 
   let db = new DBHelper();
 
-  
   return db.getState(req.userId).then(function(state) {
     if (state) {
       res
@@ -113,9 +113,10 @@ alexaApp.intent(
       }
 
       if (stateID == "QLD" || stateID == "NSW") {
-        db.setState(req.userId, stateID).then(function(){
+        db.setState(req.userId, stateID).then(function() {
           prompt = "Your state is now " + req.slot("STATE") + ". ";
-          prompt = "That's <say-as interpret-as='interjection'>awesome</say-as>! ";
+          prompt =
+            "That's <say-as interpret-as='interjection'>awesome</say-as>! ";
           prompt += "You can now ask me about holidays for your state.";
           res
             .say(prompt)
@@ -125,7 +126,7 @@ alexaApp.intent(
         });
       } else {
         prompt = "<say-as interpret-as='interjection'>bummer</say-as>. ";
-        prompt +=  "Currently I only know about holidays ";
+        prompt += "Currently I only know about holidays ";
         prompt += " in Queensland and New South Wales. ";
         prompt += "But I'm learning more every day!";
         res
@@ -274,28 +275,28 @@ alexaApp.intent(
               calCheck = new NSWHelper("western");
             }
           }
-           
-        return calCheck.nextHoliday(today).then(function(days) {
-          if (days < 0) {
-            prompt = "Hmm, aren't you on holidays now?";
-          } else if (days > 14) {
-            prompt =
-              "There are " +
-              Math.floor(days / 7) +
-              " weeks until the holidays.";
-          } else if (days > 7) {
-            prompt =
-              "There are only " +
-              days +
-              " days until the holidays. You're going to make it!";
-          } else {
-            prompt =
-              "Almost there. Only " +
-              days +
-              " until the holidays. I can almost taste the freedom!";
-          }
-          res.say(prompt).shouldEndSession(true);
-        });
+
+          return calCheck.nextHoliday(today).then(function(days) {
+            if (days < 0) {
+              prompt = "Hmm, aren't you on holidays now?";
+            } else if (days > 14) {
+              prompt =
+                "There are " +
+                Math.floor(days / 7) +
+                " weeks until the holidays.";
+            } else if (days > 7) {
+              prompt =
+                "There are only " +
+                days +
+                " days until the holidays. You're going to make it!";
+            } else {
+              prompt =
+                "Almost there. Only " +
+                days +
+                " until the holidays. I can almost taste the freedom!";
+            }
+            res.say(prompt).shouldEndSession(true);
+          });
         }
       })
       .catch(function(err) {
@@ -305,7 +306,7 @@ alexaApp.intent(
           .reprompt(errRePrompt)
           .shouldEndSession(false)
           .send();
-    });
+      });
   }
 );
 

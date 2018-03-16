@@ -57,7 +57,8 @@ function getTermBoundaries(date) {
 
     let cc = new cached_calendar();
 
-    cc.getCalendar("QLD", "school")
+    cc
+      .getCalendar("QLD", "school")
       .then(function(calendar) {
         for (let key in calendar) {
           if (calendar.hasOwnProperty(key)) {
@@ -130,7 +131,8 @@ QSH_iCal_Helper.prototype.isHoliday = function(date) {
   });
 
   //Now check for Student Free Days
-  let studentFree = cc.getCalendar("QLD", "school")
+  let studentFree = cc
+    .getCalendar("QLD", "school")
     .then(function(cal) {
       return getPrePostEvents(cal, date);
     })
