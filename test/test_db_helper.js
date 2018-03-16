@@ -15,23 +15,14 @@ describe("Testing Database Helper", function() {
       );
     });
   });
-  context("User Exists", function() {
-    it("returns true", function() {
-      return expect(subject.userExists("t12345")).to.eventually.equal(
-        true
-      );
-    });
-    it("returns false", function() {
-      return expect(subject.userExists("bill")).to.eventually.equal(
-        false
-      );
-    });
-  });
   context("Getting the User's State", function() {
-    it("returns QLD", function() {
+    it("t12345 returns QLD", function() {
       return expect(subject.getState("t12345")).to.eventually.equal(
         "QLD"
       );
+    });
+    it("bill isn't in the database", function() {
+      return expect(subject.getState("bill")).to.eventually.be.undefined;
     });
   });
 });

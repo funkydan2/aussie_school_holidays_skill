@@ -7,7 +7,7 @@ var NSW_iCal_Helper = require("../NSW_ical_helper");
 chai.config.includeStack = true;
 
 describe("NSW iCal Helper", function() {
-  var subject = new NSW_iCal_Helper();
+  var subject = new NSW_iCal_Helper("western");
   describe("#Saturday", function() {
     context("from date()", function() {
       it("returns true", function() {

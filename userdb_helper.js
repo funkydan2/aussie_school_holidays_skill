@@ -7,7 +7,7 @@ const db_file = ".data/users.db";
 
 function User_DB_Helper() {}
 
-function initDB() {
+User_DB_Helper.prototype.initDB = function() {
   //I'm not sure when to run this?
   //Maybe as part of an installation routine?
   //or if an INSERT query throws an error?
@@ -30,36 +30,6 @@ function initDB() {
       return console.error(err.message);
     }
   });
-}
-
-User_DB_Helper.prototype.userExists = function(userID) {
-  return new Promise(function(resolve, reject) {
-    let db = new sqlite3.Database(db_file, err => {
-      if (err) {
-        reject(err);
-        return console.error(err.message);
-      }
-      let query = `SELECT id FROM users WHERE id = ?`;
-      db.get(query, userID, (err, row) => {
-        if (err) {
-          reject(err);
-          console.log(err.message);
-        } else if (_.isUndefined(row)) {
-          resolve(false);
-        } else if (row.id == userID) {
-          resolve(true);
-        } else {
-          reject();
-        }
-      });
-    });
-
-    db.close(err => {
-      if (err) {
-        return console.error(err.message);
-      }
-    });
-  });
 };
 
 User_DB_Helper.prototype.getState = function(userID) {
@@ -74,6 +44,9 @@ User_DB_Helper.prototype.getState = function(userID) {
         if (err) {
           reject(err);
           console.log(err.message);
+        } else if (_.isUndefined(row)) {
+          //This means there's no user with userId
+          resolve();
         } else {
           resolve(row.state);
         }

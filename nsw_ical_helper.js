@@ -49,10 +49,16 @@ function getPrePostEvents(cal, date) {
   };
 }
 
-function getNextHoliday(date) {
+function getNextHoliday(region, date) {
   return new Promise(function(resolve, reject) {
-    var holRE = new RegExp("holiday", "i");
-    var nextHoliday;
+    let holRE;
+    let nextHoliday;
+
+    if (region == "eastern") {
+      holRE = new RegExp("holiday.+east", "i");
+    }else if (region == "western"){
+      holRE = new RegExp("holiday.+west", "i");
+    }
 
     var cc = new cached_calendar();
 
@@ -111,13 +117,21 @@ function getToday(date) {
   });
 }
 
-function NSW_iCal_Helper() {}
+function NSW_iCal_Helper(region) {
+  this.region = region;
+}
 
 NSW_iCal_Helper.prototype.isHoliday = function(date) {
   //Returns Promise of a boolean.
   //Resolves 'true' if date is a holiday.
-  var termRE = new RegExp("term.+students.+", "i");
-  var holRE = new RegExp("holiday", "i");
+  let termRE, holRE;
+  if (this.region == "eastern"){
+    termRE = new RegExp("term.+students.+east", "i");
+    holRE = new RegExp("holiday.+east", "i");
+  }else if (this.region == "western"){
+    termRE = new RegExp("term.+students.+west", "i");
+    holRE = new RegExp("holiday.+west", "i");
+  }
 
   var cc = new cached_calendar();
 
@@ -174,8 +188,10 @@ NSW_iCal_Helper.prototype.nextHoliday = function(date) {
   //Returns the promise of a real number
   //Number is the time (in decimal weeks) until the next holidays
   //If date is during a holiday, it will still give the *next*
+  let r = this.region;
+
   return new Promise(function(resolve, reject) {
-    getNextHoliday(date)
+    getNextHoliday(r, date)
       .then(function(holiday) {
         var days = moment(holiday).diff(date, "days");
         resolve(days);

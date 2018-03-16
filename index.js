@@ -19,6 +19,9 @@ var DBHelper = require("./userdb_helper.js");
 
 const PORT = process.env.PORT || 3000;
 
+const errPrompt = "An error occured. Please try again.";
+const errRePrompt = "Please ask me about school holidays.";
+
 // POST calls to / in express will be handled by the app.request() function
 alexaApp.express({
   expressApp: app,
@@ -57,18 +60,72 @@ alexaApp.launch(function(req, res) {
 });
 
 /*
-Need a 'set state' intent.
+Need a 'set/change state' intent.
 It'll be a 'dialog' function where Alexa asks the user for a state slot
 and then saves it to the database
 https://developer.amazon.com/docs/custom-skills/dialog-interface-reference.html#dialog-reqs
 https://github.com/alexa-js/alexa-app#dialog
 */
 
-/*
-Need a 'change state' intent.
-It'll be a 'dialog' intent where Alexa asks for a new start
-and then saves it to the database
-*/
+alexaApp.intent(
+  "SetState",
+  {
+    dialog: { type: "delegate" },
+    utterances: ["{set|change} {state|location}"]
+  },
+  function(req, res) {
+    if (req.getDialog().isStarted() || req.getDialog().isInProgress()) {
+      req.getDialog().handleDialogDelegation();
+    } else if (req.getDialog().isCompleted()) {
+      let db = new DBHelper();
+      let stateID;
+      let prompt;
+
+      switch (req.slot("STATE")) {
+        case "Queensland":
+          stateID = "QLD";
+          break;
+        case "New South Wales":
+          stateID = "NSW";
+          break;
+        case "Victoria":
+          stateID = "VIC";
+          break;
+        case "Australian Capital Territoy":
+          stateID = "ACT";
+          break;
+        case "South Australia":
+          stateID = "SA";
+          break;
+        case "Northern Territory":
+          stateID = "NT";
+          break;
+        case "Western Australia":
+          stateID = "WA";
+          break;
+      }
+
+      if (stateID == "QLD" || stateID == "NSW") {
+        db.setState(req.session.userId, stateID);
+        prompt = "Your state is now " + req.slot("STATE") + ". ";
+        prompt += "You can now ask me about holidays for your state.";
+        res
+          .say(prompt)
+          .reprompt("Ask me about holidays.")
+          .shouldEndSession(false)
+          .send();
+      } else {
+        prompt = "Sorry. Currently I only know about holidays ";
+        prompt += " in Queensland and New South Wales. ";
+        prompt += "But I'm learning more every day!";
+        res
+          .say(prompt)
+          .shouldEndSession(true)
+          .send();
+      }
+    }
+  }
+);
 
 alexaApp.intent(
   "HolidayCheck",
@@ -81,26 +138,7 @@ alexaApp.intent(
   function(req, res) {
     //get the slot
     let prompt, reprompt;
-
-    /*
-    First - check if user is in the database.
-    If they aren't, ask them to call the 'set state' intent
-    */
-
     let db = new DBHelper();
-
-    if (!db.userExists(req.userId)) {
-      prompt = `It looks like this is the first time you've used this skill.
-                To get started, you need to let me know which state you're in.
-                Say 'Set State' to get started.`;
-      reprompt = "Say 'Set State' to get started.";
-      res
-        .say(prompt)
-        .reprompt(reprompt)
-        .shouldEndSession(false)
-        .send();
-      return;
-    }
 
     //Check whether the DATE slot was passed in.
     if (_.isUndefined(req.slot("DATE")) || _.isEmpty(req.slot("DATE"))) {
@@ -116,95 +154,74 @@ alexaApp.intent(
       return;
     }
 
-    let state = db.getState(req.userId);
-
-    if (state == "QLD") {
-      let today = moment().tz("Australia/Brisbane");
-
-      let aDate = new AmazonDateParser(req.slot("DATE"));
-      let date = moment(aDate.startDate).tz("Australia/Brisbane");
-
-      let calCheck = new QLDHelper();
-
-      return calCheck
-        .isHoliday(date)
-        .then(function(holiday) {
-          if (moment(today).isSame(date, "day")) {
-            if (holiday) {
-              prompt = "Good news, you're on holidays. Get out and play!";
-            } else {
-              prompt =
-                "It's on! Time to pack your bag. You have to go to school";
-            }
-          } else {
-            if (holiday) {
-              prompt =
-                "Good news, " +
-                moment(date).format("dddd, MMMM Do YYYY") +
-                " is not a school day.";
-            } else {
-              prompt =
-                "I'm sorry to say, " +
-                moment(date).format("dddd, MMMM Do YYYY") +
-                " is a school day.";
-            }
-          }
-          res.say(prompt).shouldEndSession(true);
-        })
-        .catch(function(err) {
-          console.log(err.statusCode);
-          prompt = "An error occured. Please try again.";
-          reprompt = "Please ask me about school holidays.";
+    return db
+      .getState(req.session.userId)
+      .then(function(state) {
+        if (_.isUndefined(state)) {
+          prompt = `It looks like this is the first time you've used this skill.
+                  To get started, you need to let me know which state you're in.
+                  Say 'Set State' to get started.`;
+          reprompt = "Say 'Set State' to get started.";
           res
             .say(prompt)
             .reprompt(reprompt)
             .shouldEndSession(false)
             .send();
-        });
-    } else if (state == "NSW"){
-      let today = moment().tz("Australia/Sydney");
+          return;
+        } else {
+          let today, aDate, date, calCheck;
+          if (state == "QLD") {
+            today = moment().tz("Australia/Brisbane");
 
-      let aDate = new AmazonDateParser(req.slot("DATE"));
-      let date = moment(aDate.startDate).tz("Australia/Sydney");
+            aDate = new AmazonDateParser(req.slot("DATE"));
+            date = moment(aDate.startDate).tz("Australia/Brisbane");
 
-      let calCheck = new NSWHelper();
+            calCheck = new QLDHelper();
+          } else if (state.search("NSW") == 0) {
+            today = moment().tz("Australia/Sydney");
 
-      return calCheck
-        .isHoliday(date)
-        .then(function(holiday) {
-          if (moment(today).isSame(date, "day")) {
-            if (holiday) {
-              prompt = "Good news, you're on holidays. Get out and play!";
-            } else {
-              prompt =
-                "It's on! Time to pack your bag. You have to go to school";
-            }
-          } else {
-            if (holiday) {
-              prompt =
-                "Good news, " +
-                moment(date).format("dddd, MMMM Do YYYY") +
-                " is not a school day.";
-            } else {
-              prompt =
-                "I'm sorry to say, " +
-                moment(date).format("dddd, MMMM Do YYYY") +
-                " is a school day.";
+            aDate = new AmazonDateParser(req.slot("DATE"));
+            date = moment(aDate.startDate).tz("Australia/Sydney");
+            if (state.search("east") >= 3) {
+              calCheck = new NSWHelper("eastern");
+            } else if (state.search("west") >= 3) {
+              calCheck = new NSWHelper("western");
             }
           }
-          res.say(prompt).shouldEndSession(true);
-        })
-        .catch(function(err) {
-          console.log(err.statusCode);
-          prompt = "An error occured. Please try again.";
-          reprompt = "Please ask me about school holidays.";
-          res
-            .say(prompt)
-            .reprompt(reprompt)
-            .shouldEndSession(false)
-            .send();
-        });
-    }
+
+          return calCheck.isHoliday(date).then(function(holiday) {
+            if (moment(today).isSame(date, "day")) {
+              if (holiday) {
+                prompt = "Good news, you're on holidays. Get out and play!";
+              } else {
+                prompt =
+                  "It's on! Time to pack your bag. You have to go to school";
+              }
+            } else {
+              if (holiday) {
+                prompt =
+                  "Good news, " +
+                  moment(date).format("dddd, MMMM Do YYYY") +
+                  " is not a school day.";
+              } else {
+                prompt =
+                  "I'm sorry to say, " +
+                  moment(date).format("dddd, MMMM Do YYYY") +
+                  " is a school day.";
+              }
+            }
+            res.say(prompt).shouldEndSession(true);
+          });
+        }
+      })
+      .catch(function(err) {
+        console.log(err.statusCode);
+        res
+          .say(errPrompt)
+          .reprompt(errRePrompt)
+          .shouldEndSession(false)
+          .send();
+      });
   }
 );
 
@@ -214,31 +231,77 @@ alexaApp.intent(
     utterances: ["{How long until|When are} {the} {|next} {holiday|holidays}"]
   },
   function(req, res) {
-    var prompt;
-    var today = moment().tz("Australia/Brisbane");
+    var prompt, reprompt;
+    var today, calCheck;
 
-    var calCheck = new QLDHelper();
+    let db = new DBHelper();
 
-    return calCheck.nextHoliday(today).then(function(days) {
-      if (days < 0) {
-        prompt = "Hmm, aren't you on holidays now?";
-      } else if (days > 14) {
-        prompt =
-          "There are " + Math.floor(days / 7) + " weeks until the holidays.";
-      } else if (days > 7) {
-        prompt =
-          "There are only " +
-          days +
-          " days until the holidays. You're going to make it!";
-      } else {
-        prompt =
-          "Almost there. Only " +
-          days +
-          " until the holidays. I can almost taste the freedom!";
-      }
+    return db
+      .getState(req.session.userId)
+      .then(function(state) {
+        if (_.isUndefined(state)) {
+          prompt = `It looks like this is the first time you've used this skill.
+                  To get started, you need to let me know which state you're in.
+                  Say 'Set State' to get started.`;
+          reprompt = "Say 'Set State' to get started.";
+          res
+            .say(prompt)
+            .reprompt(reprompt)
+            .shouldEndSession(false)
+            .send();
+          return;
+        } else {
+          let today, aDate, date, calCheck;
+          if (state == "QLD") {
+            today = moment().tz("Australia/Brisbane");
 
-      res.say(prompt).shouldEndSession(true);
-    });
+            aDate = new AmazonDateParser(req.slot("DATE"));
+            date = moment(aDate.startDate).tz("Australia/Brisbane");
+
+            calCheck = new QLDHelper();
+          } else if (state.search("NSW") == 0) {
+            today = moment().tz("Australia/Sydney");
+
+            aDate = new AmazonDateParser(req.slot("DATE"));
+            date = moment(aDate.startDate).tz("Australia/Sydney");
+            if (state.search("east") >= 3) {
+              calCheck = new NSWHelper("eastern");
+            } else if (state.search("west") >= 3) {
+              calCheck = new NSWHelper("western");
+            }
+          }
+        }
+
+        return calCheck.nextHoliday(today).then(function(days) {
+          if (days < 0) {
+            prompt = "Hmm, aren't you on holidays now?";
+          } else if (days > 14) {
+            prompt =
+              "There are " +
+              Math.floor(days / 7) +
+              " weeks until the holidays.";
+          } else if (days > 7) {
+            prompt =
+              "There are only " +
+              days +
+              " days until the holidays. You're going to make it!";
+          } else {
+            prompt =
+              "Almost there. Only " +
+              days +
+              " until the holidays. I can almost taste the freedom!";
+          }
+          res.say(prompt).shouldEndSession(true);
+        });
+      })
+      .catch(function(err) {
+        console.log(err.statusCode);
+        res
+          .say(errPrompt)
+          .reprompt(errRePrompt)
+          .shouldEndSession(false)
+          .send();
+      });
   }
 );
 
@@ -271,7 +334,7 @@ alexaApp.intent(
   },
   function(req, res) {
     var stopOutput =
-      "Good bye. Thanks for using Queensland School Holidays on Alexa.";
+      "Good bye. Thanks for using Aussie School Holidays on Alexa.";
     res.say(stopOutput);
   }
 );
