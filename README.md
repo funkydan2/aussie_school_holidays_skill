@@ -11,10 +11,11 @@ Data is from:
 
 To-Do
 ----------------------
-* For QLD:
-  * Deal with the staggered year ending for grades 10-12
+* *Delete me* intent
 * Incorporate Victoria
   * https://www.vic.gov.au/calendar.html
   * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics
   * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-PublicHolidays.ics
+* For QLD:
+  * Deal with the staggered year ending for grades 10-12
 * More fun responses!
