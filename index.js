@@ -240,6 +240,7 @@ alexaApp.intent(
         } else {
           let today, aDate, date, calCheck;
           if (state == "QLD") {
+            moment.tz.setDefault("Australia/Brisbane");
             today = moment().tz("Australia/Brisbane");
 
             aDate = new AmazonDateParser(req.slot("DATE"));
@@ -247,6 +248,7 @@ alexaApp.intent(
 
             calCheck = new QLDHelper();
           } else if (state.search("NSW") == 0) {
+            moment.tz.setDefault("Australia/Sydney");
             today = moment().tz("Australia/Sydney");
 
             aDate = new AmazonDateParser(req.slot("DATE"));
@@ -322,9 +324,11 @@ alexaApp.intent(
         } else {
           let today, calCheck;
           if (state == "QLD") {
+            moment.tz.setDefault("Australia/Brisbane");
             today = moment().tz("Australia/Brisbane");
             calCheck = new QLDHelper();
           } else if (state.search("NSW") == 0) {
+            moment.tz.setDefault("Australia/Sydney");
             today = moment().tz("Australia/Sydney");
 
             if (state.search("east") >= 3) {
