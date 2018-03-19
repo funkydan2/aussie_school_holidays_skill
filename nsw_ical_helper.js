@@ -49,72 +49,82 @@ function getPrePostEvents(cal, date) {
   };
 }
 
-function getNextHoliday(region, date) {
-  return new Promise(function(resolve, reject) {
-    let holRE;
-    let nextHoliday;
+function getNextHoliday(schoolCalendar, region, date) {
+  let holRE;
+  let nextHoliday;
 
-    if (region == "eastern") {
-      holRE = new RegExp("holiday.+east", "i");
-    }else if (region == "western"){
-      holRE = new RegExp("holiday.+west", "i");
-    }
+  if (region == "eastern") {
+    holRE = new RegExp("holiday.+east", "i");
+  } else if (region == "western") {
+    holRE = new RegExp("holiday.+west", "i");
+  }
 
-    var cc = new cached_calendar();
-
-    cc
-      .getCalendar("NSW", "school")
-      .then(function(calendar) {
-        for (var key in calendar) {
-          if (calendar.hasOwnProperty(key)) {
-            var e = calendar[key];
-            if (holRE.test(e.summary)) {
-              if (moment(e.start).isSameOrAfter(date, "day")) {
-                if (_.isUndefined(nextHoliday)) {
-                  nextHoliday = e.start;
-                } else if (moment(e.start).isBefore(nextHoliday)) {
-                  nextHoliday = e.start;
-                }
-              }
-            }
+  for (var key in schoolCalendar) {
+    if (schoolCalendar.hasOwnProperty(key)) {
+      var e = schoolCalendar[key];
+      if (holRE.test(e.summary)) {
+        if (moment(e.start).isSameOrAfter(date, "day")) {
+          if (_.isUndefined(nextHoliday)) {
+            nextHoliday = e.start;
+          } else if (moment(e.start).isBefore(nextHoliday)) {
+            nextHoliday = e.start;
           }
         }
-        resolve(nextHoliday);
-      })
-      .catch(function(error) {
-        console.log("Failed: ", error);
-        reject(error);
-        return;
-      });
-  });
+      }
+    }
+  }
+  return nextHoliday;
 }
 
-function getToday(date) {
-  return new Promise(function(resolve, reject) {
-    var dateEvents = [];
-    //This function returns an array with all the events on date.
-    let cc = new cached_calendar();
+function getToday(schoolCalendar, date) {
+  var dateEvents = [];
+  //This function returns an array with all the events on date.
+  for (var key in schoolCalendar) {
+    if (schoolCalendar.hasOwnProperty(key)) {
+      let e = schoolCalendar[key];
 
-    cc
-      .getCalendar("NSW", "school")
-      .then(function(calendar) {
-        for (var key in calendar) {
-          if (calendar.hasOwnProperty(key)) {
-            let e = calendar[key];
+      if (moment(date).isBetween(e.start, e.end)) {
+        dateEvents.push(e.summary);
+      }
+    }
+  }
+  return dateEvents;
+}
 
-            if (moment(date).isBetween(e.start, e.end)) {
-              dateEvents.push(e.summary);
-            }
-          }
-        }
-        resolve(dateEvents);
-      })
-      .catch(function(error) {
-        console.log("Failed: ", error);
-        reject(error);
-        return;
-      });
-  });
+function holidayChecker(holidayCalendar, schoolCalendar, region, date) {
+  let events, preEvent;
+  let today, termRE, holRE;
+
+  if (region == "eastern") {
+    termRE = new RegExp("term.+students.+east", "i");
+    holRE = new RegExp("holiday.+east", "i");
+  } else if (region == "western") {
+    termRE = new RegExp("term.+students.+west", "i");
+    holRE = new RegExp("holiday.+west", "i");
+  }
+
+  //Check for weekend
+  if (moment(date).day() == 0 || moment(date).day() == 6) {
+    return true;
+  }
+  //Check for public holidays
+  events = getPrePostEvents(holidayCalendar, date);
+  preEvent = events.pre;
+  if (moment(preEvent.start).isSame(date, "day")) {
+    console.log("It's ", preEvent.summary, "!");
+    return true;
+  }
+
+  //Check school calendar - what kind of day is it?
+  events = getToday(schoolCalendar, date);
+  for (var i = 0; i < events.length; i++) {
+    if (holRE.test(events[i])) {
+      return true;
+    } else if (termRE.test(events[i])) {
+      return false;
+    }
+  }
+  return false;
 }
 
 function NSW_iCal_Helper(region) {
@@ -124,57 +134,15 @@ function NSW_iCal_Helper(region) {
 NSW_iCal_Helper.prototype.isHoliday = function(date) {
   //Returns Promise of a boolean.
   //Resolves 'true' if date is a holiday.
-  let termRE, holRE;
-  if (this.region == "eastern"){
-    termRE = new RegExp("term.+students.+east", "i");
-    holRE = new RegExp("holiday.+east", "i");
-  }else if (this.region == "western"){
-    termRE = new RegExp("term.+students.+west", "i");
-    holRE = new RegExp("holiday.+west", "i");
-  }
 
-  var cc = new cached_calendar();
-
-  //Easy one first. If it's a weekend, return true!
-  var weekend = moment(date).day() == 0 || moment(date).day() == 6;
-
-  //Next, if date is a public holiday, return true!
-  var publicHol = cc.getCalendar("NSW", "public").then(function(cal) {
-    var events = getPrePostEvents(cal, date);
-
-    var event = events.pre;
-    if (moment(event.start).isSame(date, "day")) {
-      console.log("It's ", event.summary, "!");
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  var holidayTime = getToday(date).then(function(events) {
-    //Now check whether DATE is inside or outside of term boundaries
-    for (var i = 0; i < events.length; i++) {
-      if (holRE.test(events[i])) {
-        return true;
-      } else if (termRE.test(events[i])) {
-        return false;
-      }
-    }
-  });
+  let holidayCal = new cached_calendar("NSW", "public");
+  let schoolCal = new cached_calendar("NSW", "school");
+  let region = this.region;
 
   return new Promise(function(resolve, reject) {
-    Promise.all([weekend, publicHol, holidayTime])
-      .then(function(values) {
-        if (values[0]) {
-          resolve(true);
-        } else if (values[1]) {
-          resolve(true);
-        } else if (values[2]) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
-        return;
+    Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
+      .then(function(calendars) {
+        resolve(holidayChecker(calendars[0], calendars[1], region, date));
       })
       .catch(function(error) {
         console.log("Failed: ", error);
@@ -189,12 +157,27 @@ NSW_iCal_Helper.prototype.nextHoliday = function(date) {
   //Number is the time (in decimal weeks) until the next holidays
   //If date is during a holiday, it will still give the *next*
   let r = this.region;
+  let howLong = { totalDays: 0, schoolDays: 0 };
+
+  let holidayCal = new cached_calendar("NSW", "public");
+  let schoolCal = new cached_calendar("NSW", "school");
 
   return new Promise(function(resolve, reject) {
-    getNextHoliday(r, date)
-      .then(function(holiday) {
-        var days = moment(holiday).diff(date, "days");
-        resolve(days);
+    Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
+      .then(function(calendars) {
+        let nextHoliday = getNextHoliday(calendars[1], r, date);
+        howLong.totalDays = moment(nextHoliday).diff(date, "days");
+
+        let d = date;
+        while (moment(d).isSameOrBefore(nextHoliday)) {
+          if (!holidayChecker(calendars[0], calendars[1], r, d)) {
+            howLong.schoolDays++;
+          }
+
+          d = moment(d).add(1, "days");
+        }
+
+        resolve(howLong);
       })
       .catch(function(error) {
         console.log("Failed: ", error);

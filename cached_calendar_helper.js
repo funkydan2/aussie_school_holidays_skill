@@ -39,39 +39,44 @@ function updateCache(url, file) {
   });
 }
 
+function Cached_Calendar_Helper(state, type) {
+  this.state = state;
+  this.type = type;
+}
 
-function Cached_Calendar_Helper() {}
+Cached_Calendar_Helper.prototype.getCalendar = function() {
+  let state = this.state;
+  let type = this.type;
 
-Cached_Calendar_Helper.prototype.getCalendar = function(state, type) {
   return new Promise(function(resolve, reject) {
     var url, filename;
 
     switch (state) {
-      case "NSW" :
+      case "NSW":
         switch (type) {
-          case PUBLIC :
+          case PUBLIC:
             url = NSWHolCalURL;
             filename = NSWHolCalF;
             break;
-          case SCHOOL :
+          case SCHOOL:
             url = NSWEdCalURL;
             filename = NSWEdCalF;
             break;
-          }
-          break;
-        case "QLD" :
-            switch (type) {
-              case PUBLIC :
-                url = QHolCalURL;
-                filename = QHolCalF;
-                break;
-              case SCHOOL :
-                url = QEdCalURL;
-                filename = QEdCalF;
-                break;
-              }
-              break;
-            }
+        }
+        break;
+      case "QLD":
+        switch (type) {
+          case PUBLIC:
+            url = QHolCalURL;
+            filename = QHolCalF;
+            break;
+          case SCHOOL:
+            url = QEdCalURL;
+            filename = QEdCalF;
+            break;
+        }
+        break;
+    }
 
     let refreshCache = new Promise(function(resolve, reject) {
       fs.stat(filename, function(err, stats) {

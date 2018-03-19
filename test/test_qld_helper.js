@@ -47,16 +47,17 @@ describe("QSH iCal Helper", function() {
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
       it("July 16 returns false", function() {
-        var d = new Date("2018-07-16");
+        let d = new Date("2018-07-16");
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
     });
   });
   describe("#UntilHolidays", function() {
     context("from March 8 2018", function() {
-      it("returns 21", function() {
-        var d = new Date("2018-03-08");
-        return expect(subject.nextHoliday(d)).to.eventually.equal(21);
+      it("returns 21:16", function() {
+        let d = new Date("2018-03-08");
+        let r = {'totalDays' : 21, 'schoolDays' : 16};
+        return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });
   });

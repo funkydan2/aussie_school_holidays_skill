@@ -335,22 +335,22 @@ alexaApp.intent(
           }
 
           return calCheck.nextHoliday(today).then(function(days) {
-            if (days < 0) {
+            if (days.schoolDays < 0) {
               prompt = "Hmm, aren't you on holidays now?";
-            } else if (days > 14) {
+            } else if (days.totalDays > 14) {
               prompt =
                 "There are " +
                 Math.floor(days / 7) +
                 " weeks until the holidays.";
-            } else if (days > 7) {
+            } else if (days.totalDays > 7) {
               prompt =
                 "There are only " +
-                days +
+                days.schoolDays +
                 " days until the holidays. You're going to make it!";
             } else {
               prompt =
                 "Almost there. Only " +
-                days +
+                days.schoolDays +
                 " until the holidays. I can almost taste the freedom!";
             }
             res.say(prompt).shouldEndSession(true);

@@ -54,9 +54,10 @@ describe("NSW iCal Helper", function() {
   });
   describe("#UntilHolidays", function() {
     context("from July 2 2018", function() {
-      it("returns 6", function() {
+      it("returns 6:5", function() {
         var d = new Date("2018-07-02");
-        return expect(subject.nextHoliday(d)).to.eventually.equal(6);
+        let r = { totalDays: 6, schoolDays: 5 };
+        return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });
   });
