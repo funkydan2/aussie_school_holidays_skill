@@ -53,10 +53,10 @@ describe("QSH iCal Helper", function() {
     });
   });
   describe("#UntilHolidays", function() {
-    context("from March 8 2018", function() {
-      it("returns 21:16", function() {
-        let d = new Date("2018-03-08");
-        let r = {'totalDays' : 21, 'schoolDays' : 16};
+    context("from March 20 2018", function() {
+      it("returns 10:8", function() {
+        let d = new Date("2018-03-20");
+        let r = {'totalDays' : 10, 'schoolDays' : 8};
         return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });

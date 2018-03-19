@@ -49,31 +49,31 @@ function getPrePostEvents(cal, date) {
   };
 }
 
-function getNextHoliday(schoolCalendar, region, date) {
-  let holRE;
-  let nextHoliday;
+function getTermEnd(schoolCalendar, region, date) {
+  let termRE;
+  let termEnd;
 
   if (region == "eastern") {
-    holRE = new RegExp("holiday.+east", "i");
+    termRE = new RegExp("term.+east", "i");
   } else if (region == "western") {
-    holRE = new RegExp("holiday.+west", "i");
+    termRE = new RegExp("term.+west", "i");
   }
 
   for (var key in schoolCalendar) {
     if (schoolCalendar.hasOwnProperty(key)) {
       var e = schoolCalendar[key];
-      if (holRE.test(e.summary)) {
-        if (moment(e.start).isSameOrAfter(date, "day")) {
-          if (_.isUndefined(nextHoliday)) {
-            nextHoliday = e.start;
-          } else if (moment(e.start).isBefore(nextHoliday)) {
-            nextHoliday = e.start;
+      if (termRE.test(e.summary)) {
+        if (moment(e.end).isSameOrAfter(date, "day")) {
+          if (_.isUndefined(termEnd)) {
+            termEnd = e.end;
+          } else if (moment(e.end).isBefore(termEnd)) {
+            termEnd = e.end;
           }
         }
       }
     }
   }
-  return nextHoliday;
+  return termEnd;
 }
 
 function getToday(schoolCalendar, date) {
@@ -165,15 +165,14 @@ NSW_iCal_Helper.prototype.nextHoliday = function(date) {
   return new Promise(function(resolve, reject) {
     Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
       .then(function(calendars) {
-        let nextHoliday = getNextHoliday(calendars[1], r, date);
-        howLong.totalDays = moment(nextHoliday).diff(date, "days");
+        let termEnd = getTermEnd(calendars[1], r, date);
+        howLong.totalDays = moment(termEnd).diff(date, "days")+1;
 
         let d = date;
-        while (moment(d).isSameOrBefore(nextHoliday)) {
+        while (moment(d).isSameOrBefore(termEnd)) {
           if (!holidayChecker(calendars[0], calendars[1], r, d)) {
             howLong.schoolDays++;
           }
-
           d = moment(d).add(1, "days");
         }
 
