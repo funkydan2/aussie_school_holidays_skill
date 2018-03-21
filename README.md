@@ -12,22 +12,6 @@ This skill is available [for Australian Alexa users](https://www.amazon.com.au/D
 
 Please use [github](https://github.com/funkydan2/aussie_school_holidays_skill/issues) for bug reports and feature requests.
 
-## To-Do
-* Link to github on the Alexa Page for bug reports and feature requests
-* _Delete me_ intent
-* Incorporate Victoria
-  * https://www.vic.gov.au/calendar.html
-  * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics
-  * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-PublicHolidays.ics
-* Look into
-  * South Australia
-  * Tasmania
-  * Western Australia
-  * ACT and NT
-* For QLD:
-  * Deal with the staggered year ending for grades 10-12
-* More fun responses!
-
 ## Installation Instructions
 
 If you want to use this code on your own server, you need to kick things off by running `node install.js` to create the initial database.

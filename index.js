@@ -373,6 +373,31 @@ alexaApp.intent(
 );
 
 alexaApp.intent(
+  "DeleteUser",
+  {
+    slots: {},
+    utterances: ["{delete|remove} {me|account}"]
+  },
+  function(req, res) {
+    let db = new DBHelper();
+
+    return db
+      .deleteUser(req.userId)
+      .then(function() {
+        res.say("Your account has been deleted.").send();
+      })
+      .catch(function(err) {
+        console.error(err);
+        res
+          .say(errPrompt)
+          .reprompt(errRePrompt)
+          .shouldEndSession(false)
+          .send();
+      });
+  }
+);
+
+alexaApp.intent(
   "AMAZON.HelpIntent",
   {
     slots: {},
