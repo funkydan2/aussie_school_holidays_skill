@@ -19,7 +19,7 @@ describe("QSH iCal Helper", function() {
   describe("#Public Holiday", function() {
     context("from the Public Holiday Calendar", function() {
       it("returns true", function() {
-        var d = new Date("2017-01-01");
+        var d = new Date("2018-11-06");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
     });
