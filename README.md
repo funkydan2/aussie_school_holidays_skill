@@ -1,6 +1,6 @@
 # Queensland School Holidays Alexa Skill
 
-Using publicly accessible data this skill allows users to ask whether a particular day is a holiday, or how long until the end of the next term.
+Using publicly accessible data this skill allows users to ask whether a particular day is a holiday, or how long it is until the end of the term.
 
 Data is from:
 
