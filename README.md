@@ -4,9 +4,10 @@ Using publicly accessible data this skill allows users to ask whether a particul
 
 Data is from:
 
-* Qld Government (used under CC By 4.0 license)
-* NSW Government (used under CC By 4.0 license)
-* http://public-holidays.dteoh.com
+* Queensland Government (used under CC By 4.0 license)
+* New South Wales Government (used under CC By 4.0 license)
+* Victorian Government (used under CC By 4.0 license)
+* http://public-holidays.dteoh.com (used with permission)
 
 This skill is available [for Australian Alexa users](https://www.amazon.com.au/Daniel-Saunders-Queensland-School-Holidays/dp/B07B8ZQLMK/ref=sr_1_1?s=digital-skills&ie=UTF8&qid=1521263206&sr=1-1&keywords=aussie+holidays).
 
