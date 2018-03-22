@@ -1,6 +1,6 @@
 {
   "name": "aus-school-cal",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Alexa skill with information about school holidays.",
   "scripts": {
     "test": "mocha",
