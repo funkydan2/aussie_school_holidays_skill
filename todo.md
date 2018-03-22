@@ -1,9 +1,12 @@
 ## To-Do
-* Link to github on the Alexa Page for bug reports and feature requests
 * Incorporate Victoria
   * https://www.vic.gov.au/calendar.html
   * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics
   * http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-PublicHolidays.ics
+* Card Output
+  * Is {date} a holiday?: '{Date} is a school day/holiday.'
+    * Maybe it could also explain why a day is a holiday (it's the weekend, it's X public holiday, it's not term time.)
+  * How Long: 'There are X calendar days and Y school days until the holidays.'
 * Look into
   * South Australia
   * Tasmania

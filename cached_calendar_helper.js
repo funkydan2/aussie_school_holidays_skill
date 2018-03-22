@@ -16,6 +16,12 @@ const NSWEdCalURL =
   "https://education.nsw.gov.au/public-schools/going-to-a-public-school/media/documents/NSW-public-schools-term-dates-and-holidays_psnswtermdates@gmail.com.ics";
 const NSWEdCalF = ".data/nsw_school_holidays.ics";
 
+const VHolCalURL = "http://public-holidays.dteoh.com/vic.ics";
+const VHolCalF = ".data/vic_public_holidays.ics";
+const VEdCalURL =
+  "http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics";
+const VEdCalF = ".data/vic_school_holidays.ics";
+
 const PUBLIC = "public";
 const SCHOOL = "school";
 
@@ -23,13 +29,13 @@ function updateCache(url, file) {
   return new Promise(function(resolve, reject) {
     http.get(url, file, function(err, result) {
       if (err) {
-        console.error(err);
+        console.error("http-get error: ", err);
         reject(err);
       } else {
         //update timestamp!
         fs.utimes(file, new Date(), new Date(), function(err) {
           if (err) {
-            console.error(err);
+            console.error("Timestamp error: ", err);
           }
         });
         console.log("File downloaded at: " + result.file);
@@ -73,6 +79,18 @@ Cached_Calendar_Helper.prototype.getCalendar = function() {
           case SCHOOL:
             url = QEdCalURL;
             filename = QEdCalF;
+            break;
+        }
+        break;
+      case "VIC":
+        switch (type) {
+          case PUBLIC:
+            url = VHolCalURL;
+            filename = VHolCalF;
+            break;
+          case SCHOOL:
+            url = VEdCalURL;
+            filename = VEdCalF;
             break;
         }
         break;

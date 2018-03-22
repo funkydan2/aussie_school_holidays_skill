@@ -1,9 +1,8 @@
 /*
-This module uses data provided by the QLD Government's Department of Education publicly
+This module uses data provided by the Victorian Government's Department of Education publicly
 available school calendar, parses it, and returns values depending on the function called.
 
-Data is sourced from - http://education.qld.gov.au/public_media/calendar/holidays.html
-and the code is inspired by https://github.com/semaja2/moment-holiday-australia
+Data is sourced from - https://www.vic.gov.au/calendar.html
 
 */
 
@@ -59,7 +58,7 @@ function getTermBoundaries(schoolCalendar, date) {
     if (schoolCalendar.hasOwnProperty(key)) {
       let e = schoolCalendar[key];
       const termRE = RegExp("^term", "i");
-      if (termRE.test(e.summary.val)) {
+      if (termRE.test(e.summary)) {
         if (moment(e.start).isSameOrBefore(date, "day")) {
           if (
             (_.isUndefined(preBoundary) ||
@@ -90,7 +89,6 @@ function getTermBoundaries(schoolCalendar, date) {
 
 function holidayChecker(holidayCalendar, schoolCalendar, date) {
   const termRE = new RegExp("term", "i");
-  const studentFreeRE = new RegExp("student free", "i");
   const termStartRE = new RegExp("(starts|begins)", "i");
   const termEndRE = new RegExp("(ends|finishes)", "i");
 
@@ -114,33 +112,11 @@ function holidayChecker(holidayCalendar, schoolCalendar, date) {
     return true;
   }
 
-  //Check if it's a pupil free days
-  events = getPrePostEvents(schoolCalendar, date);
-
-  preEvent = events.pre;
-  postEvent = events.post;
-
-  preTitle = preEvent.summary.val;
-  postTitle = postEvent.summary.val;
-
-  if (moment(preEvent.start).isSame(date, "day")) {
-    console.log(preTitle);
-    if (studentFreeRE.test(preTitle)) {
-      //date is a Student Free Day
-      return true;
-    }
-    if (termRE.test(preTitle)) {
-      //The given day is labelled as either first or last of term
-      console.log(date, " is first or last day of term.");
-      return false;
-    }
-  }
-
   //Check if it's outside of term time
   let b = getTermBoundaries(schoolCalendar, date);
   //Now check whether DATE is inside or outside of term boundaries
-  preTitle = b.pre.summary.val;
-  postTitle = b.post.summary.val;
+  preTitle = b.pre.summary;
+  postTitle = b.post.summary;
   if (termStartRE.test(preTitle) && termEndRE.test(postTitle)) {
     //It's term time.
     return false;
@@ -152,14 +128,14 @@ function holidayChecker(holidayCalendar, schoolCalendar, date) {
   }
 }
 
-function QSH_iCal_Helper() {}
+function VSH_iCal_Helper() {}
 
-QSH_iCal_Helper.prototype.isHoliday = function(date) {
+VSH_iCal_Helper.prototype.isHoliday = function(date) {
   //Returns Promise of a boolean.
   //Resolves 'true' if date is a holiday.
 
-  let holidayCal = new cached_calendar("QLD", "public");
-  let schoolCal = new cached_calendar("QLD", "school");
+  let holidayCal = new cached_calendar("VIC", "public");
+  let schoolCal = new cached_calendar("VIC", "school");
 
   return new Promise(function(resolve, reject) {
     Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
@@ -174,13 +150,13 @@ QSH_iCal_Helper.prototype.isHoliday = function(date) {
   });
 };
 
-QSH_iCal_Helper.prototype.nextHoliday = function(date) {
+VSH_iCal_Helper.prototype.nextHoliday = function(date) {
   //Returns the promise of a real number
   //Number is the time (in decimal weeks) until the next holidays
   //If date is during a holiday, it will still give the *next*
   let howLong = { totalDays: 0, schoolDays: 0 };
-  let holidayCal = new cached_calendar("QLD", "public");
-  let schoolCal = new cached_calendar("QLD", "school");
+  let holidayCal = new cached_calendar("VIC", "public");
+  let schoolCal = new cached_calendar("VIC", "school");
 
   return new Promise(function(resolve, reject) {
     Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
@@ -190,8 +166,8 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
         let bounds = getTermBoundaries(schoolCal, date);
 
         let nextHoliday;
-        let preTitle = bounds.pre.summary.val;
-        let postTitle = bounds.post.summary.val;
+        let preTitle = bounds.pre.summary;
+        let postTitle = bounds.post.summary;
         let termEndsRE = new RegExp("(end|finish)", "i");
 
         if (termEndsRE.test(preTitle)) {
@@ -225,4 +201,4 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
   });
 };
 
-module.exports = QSH_iCal_Helper;
+module.exports = VSH_iCal_Helper;

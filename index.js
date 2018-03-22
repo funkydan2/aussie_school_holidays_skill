@@ -15,6 +15,7 @@ var alexaApp = new alexa.app("");
 //My Helper Objects
 var QLDHelper = require("./qld_ical_helper");
 var NSWHelper = require("./nsw_ical_helper");
+var VICHelper = require("./vic_ical_helper");
 var DBHelper = require("./userdb_helper.js");
 
 const PORT = process.env.PORT || 3000;
@@ -111,46 +112,51 @@ alexaApp.intent(
           break;
       }
 
-      if (stateID == "QLD") {
-        return db
-          .setState(req.userId, stateID)
-          .then(function() {
-            prompt = "Your state is now " + req.slot("STATE") + ". ";
-            prompt =
-              "That's <say-as interpret-as='interjection'>awesome</say-as>! ";
-            prompt += "You can now ask me about holidays for your state.";
-            res
-              .say(prompt)
-              .reprompt("Ask me about holidays.")
-              .shouldEndSession(false)
-              .send();
-          })
-          .catch(function(err) {
-            console.log(err.statusCode);
-            res
-              .say(errPrompt)
-              .reprompt(errRePrompt)
-              .shouldEndSession(false)
-              .send();
-          });
-      } else if (stateID == "NSW") {
-        prompt = "For New South Wales users, we also need to set the region. ";
-        prompt +=
-          "Please say, 'set region to eastern' or 'set region to western'";
-        res
-          .say(prompt)
-          .reprompt("Please set your region.")
-          .shouldEndSession(false)
-          .send();
-      } else {
-        prompt = "<say-as interpret-as='interjection'>bummer</say-as>. ";
-        prompt += "Currently I only know about holidays ";
-        prompt += " in Queensland and New South Wales. ";
-        prompt += "But I'm learning more every day!";
-        res
-          .say(prompt)
-          .shouldEndSession(true)
-          .send();
+      switch (stateID) {
+        case "QLD":
+        case "VIC":
+          return db
+            .setState(req.userId, stateID)
+            .then(function() {
+              prompt = "Your state is now " + req.slot("STATE") + ". ";
+              prompt =
+                "That's <say-as interpret-as='interjection'>awesome</say-as>! ";
+              prompt += "You can now ask me about holidays for your state.";
+              res
+                .say(prompt)
+                .reprompt("Ask me about holidays.")
+                .shouldEndSession(false)
+                .send();
+            })
+            .catch(function(err) {
+              console.log(err.statusCode);
+              res
+                .say(errPrompt)
+                .reprompt(errRePrompt)
+                .shouldEndSession(false)
+                .send();
+            });
+        case "NSW":
+          prompt =
+            "For New South Wales users, we also need to set the region. ";
+          prompt +=
+            "Please say, 'set region to eastern' or 'set region to western'";
+          res
+            .say(prompt)
+            .reprompt("Please set your region.")
+            .shouldEndSession(false)
+            .send();
+          return;
+        default:
+          prompt = "<say-as interpret-as='interjection'>bummer</say-as>. ";
+          prompt += "Currently I only know about holidays ";
+          prompt += "in Queensland, New South Wales, and Victoria. ";
+          prompt += "But I'm learning more every day!";
+          res
+            .say(prompt)
+            .shouldEndSession(true)
+            .send();
+          return;
       }
     }
   }
@@ -258,6 +264,14 @@ alexaApp.intent(
             } else if (state.search("west") >= 3) {
               calCheck = new NSWHelper("western");
             }
+          } else if (state == "VIC") {
+            moment.tz.setDefault("Australia/Melbourne");
+            today = moment().tz("Australia/Melbourne");
+
+            aDate = new AmazonDateParser(req.slot("DATE"));
+            date = moment(aDate.startDate).tz("Australia/Melbourne");
+
+            calCheck = new VICHelper();
           }
 
           return calCheck.isHoliday(date).then(function(holiday) {
@@ -336,6 +350,10 @@ alexaApp.intent(
             } else if (state.search("west") >= 3) {
               calCheck = new NSWHelper("western");
             }
+          } else if (state == "VIC") {
+            moment.tz.setDefault("Australia/Melbourne");
+            today = moment().tz("Australia/Melbourne");
+            calCheck = new VICHelper();
           }
 
           return calCheck.nextHoliday(today).then(function(days) {
