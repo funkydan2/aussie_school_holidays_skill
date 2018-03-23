@@ -67,14 +67,6 @@ alexaApp.launch(function(req, res) {
   });
 });
 
-/*
-Need a 'set/change state' intent.
-It'll be a 'dialog' function where Alexa asks the user for a state slot
-and then saves it to the database
-https://developer.amazon.com/docs/custom-skills/dialog-interface-reference.html#dialog-reqs
-https://github.com/alexa-js/alexa-app#dialog
-*/
-
 alexaApp.intent(
   "SetState",
   {
@@ -118,10 +110,10 @@ alexaApp.intent(
           return db
             .setState(req.userId, stateID)
             .then(function() {
-              prompt = "Your state is now " + req.slot("STATE") + ". ";
-              prompt =
+              prompt = "Your state is now " + req.slot("STATE") + ". <break strength='x-strong'/>";
+              prompt +=
                 "That's <say-as interpret-as='interjection'>awesome</say-as>! ";
-              prompt += "You can now ask me about holidays for your state.";
+              prompt += "You can now ask me about holidays for your state.our state.";
               res
                 .say(prompt)
                 .reprompt("Ask me about holidays.")

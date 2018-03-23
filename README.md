@@ -9,7 +9,7 @@ Data is from:
 * Victorian Government (used under CC By 4.0 license)
 * http://public-holidays.dteoh.com (used with permission)
 
-This skill is available [for Australian Alexa users](https://www.amazon.com.au/Daniel-Saunders-Queensland-School-Holidays/dp/B07B8ZQLMK/ref=sr_1_1?s=digital-skills&ie=UTF8&qid=1521263206&sr=1-1&keywords=aussie+holidays).
+This skill is available [for Australian Alexa users](https://www.amazon.com.au/Daniel-Saunders-Queensland-School-Holidays/dp/B07B8ZQLMK/).
 
 Please use [github](https://github.com/funkydan2/aussie_school_holidays_skill/issues) for bug reports and feature requests.
 
