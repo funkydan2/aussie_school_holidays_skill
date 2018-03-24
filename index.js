@@ -24,6 +24,10 @@ const errPrompt =
   "<say-as interpret-as='interjection'>bummer</say-as>, An error occured. Please try again.";
 const errRePrompt = "Please ask me about school holidays.";
 
+const tzQLD = "Australia/Brisbane";
+const tzNSW = "Australia/Sydney";
+const tzVIC = "Australia/Melbourne";
+
 // POST calls to / in express will be handled by the app.request() function
 alexaApp.express({
   expressApp: app,
@@ -205,6 +209,7 @@ alexaApp.intent(
   function(req, res) {
     //get the slot
     let prompt, reprompt;
+    let timezone;
     let db = new DBHelper();
 
     //Check whether the DATE slot was passed in.
@@ -238,33 +243,24 @@ alexaApp.intent(
         } else {
           let today, aDate, date, calCheck;
           if (state == "QLD") {
-            moment.tz.setDefault("Australia/Brisbane");
-            today = moment().tz("Australia/Brisbane");
-
-            aDate = new AmazonDateParser(req.slot("DATE"));
-            date = moment(aDate.startDate).tz("Australia/Brisbane");
-
+            timezone = tzQLD;
             calCheck = new QLDHelper();
           } else if (state.search("NSW") == 0) {
-            moment.tz.setDefault("Australia/Sydney");
-            today = moment().tz("Australia/Sydney");
-
-            aDate = new AmazonDateParser(req.slot("DATE"));
-            date = moment(aDate.startDate).tz("Australia/Sydney");
+            timezone = tzNSW;
             if (state.search("east") >= 3) {
               calCheck = new NSWHelper("eastern");
             } else if (state.search("west") >= 3) {
               calCheck = new NSWHelper("western");
             }
           } else if (state == "VIC") {
-            moment.tz.setDefault("Australia/Melbourne");
-            today = moment().tz("Australia/Melbourne");
-
-            aDate = new AmazonDateParser(req.slot("DATE"));
-            date = moment(aDate.startDate).tz("Australia/Melbourne");
-
+            timezone = tzVIC;
             calCheck = new VICHelper();
           }
+          
+          moment.tz.setDefault(timezone);
+          today = moment().tz(timezone);
+          aDate = new AmazonDateParser(req.slot("DATE"));
+          date = moment(aDate.startDate).tz(timezone);
 
           return calCheck.isHoliday(date).then(function(holiday) {
             if (moment(today).isSame(date, "day")) {
@@ -308,9 +304,10 @@ alexaApp.intent(
     utterances: ["{How long until|When are} {the} {|next} {holiday|holidays}"]
   },
   function(req, res) {
-    var prompt, reprompt;
-    var today, calCheck;
-
+    let prompt, reprompt;
+    let today, calCheck;
+    let timezone;
+    
     let db = new DBHelper();
 
     return db
@@ -330,23 +327,21 @@ alexaApp.intent(
         } else {
           let today, calCheck;
           if (state == "QLD") {
-            moment.tz.setDefault("Australia/Brisbane");
-            today = moment().tz("Australia/Brisbane");
+            timezone = tzQLD;
             calCheck = new QLDHelper();
           } else if (state.search("NSW") == 0) {
-            moment.tz.setDefault("Australia/Sydney");
-            today = moment().tz("Australia/Sydney");
-
+            timezone = tzNSW;
             if (state.search("east") >= 3) {
               calCheck = new NSWHelper("eastern");
             } else if (state.search("west") >= 3) {
               calCheck = new NSWHelper("western");
             }
           } else if (state == "VIC") {
-            moment.tz.setDefault("Australia/Melbourne");
-            today = moment().tz("Australia/Melbourne");
+            timezone = tzVIC;
             calCheck = new VICHelper();
           }
+          moment.tz.setDefault(timezone);
+          today = moment().tz(timezone);
 
           return calCheck.nextHoliday(today).then(function(days) {
             if (days.schoolDays < 0) {
