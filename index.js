@@ -355,7 +355,7 @@ alexaApp.intent(
                  You're going to make it!`;
             } else {
               prompt =
-                `Almost there. Only ${days.schoolDays} days until the holidays. 
+                `Almost there. Only ${days.schoolDays} more days until the holidays. 
                  Can't you almost taste the freedom!`;
             }
             res.say(prompt).shouldEndSession(true);
