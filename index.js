@@ -348,19 +348,15 @@ alexaApp.intent(
               prompt = "Hmm, aren't you on holidays now?";
             } else if (days.totalDays > 14) {
               prompt =
-                "There are " +
-                Math.floor(days / 7) +
-                " weeks until the holidays.";
+                `There are ${Math.floor(days / 7)} weeks until the holidays.`;
             } else if (days.totalDays > 7) {
               prompt =
-                "There are only " +
-                days.schoolDays +
-                " days until the holidays. You're going to make it!";
+                `There are only ${days.schoolDays} school days until the holidays. 
+                 You're going to make it!`;
             } else {
               prompt =
-                "Almost there. Only " +
-                days.schoolDays +
-                " until the holidays. I can almost taste the freedom!";
+                `Almost there. Only ${days.schoolDays} days until the holidays. 
+                 Can't you almost taste the freedom!`;
             }
             res.say(prompt).shouldEndSession(true);
           });
@@ -409,10 +405,10 @@ alexaApp.intent(
     utterances: {}
   },
   function(req, res) {
-    var prompt = "This is the Aussie School Holidays Skill. ";
-    prompt += "To change the state say 'change state'. ";
-    prompt += 'You can ask "is today a school day?" or, ';
-    prompt += '"how long until the holidays?"';
+    var prompt = `This is the Aussie School Holidays Skill. 
+                  To change the state say 'change state'.
+                  You can ask "is today a school day?" or,
+                  "how long until the holidays?"`;
 
     var reprompt = "What would you like to do?";
 
