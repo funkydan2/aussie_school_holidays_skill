@@ -114,10 +114,14 @@ alexaApp.intent(
           return db
             .setState(req.userId, stateID)
             .then(function() {
-              prompt = "Your state is now " + req.slot("STATE") + ". <break strength='x-strong'/>";
+              prompt =
+                "Your state is now " +
+                req.slot("STATE") +
+                ". <break strength='x-strong'/>";
               prompt +=
                 "That's <say-as interpret-as='interjection'>awesome</say-as>! ";
-              prompt += "You can now ask me about holidays for your state.our state.";
+              prompt +=
+                "You can now ask me about holidays for your state.our state.";
               res
                 .say(prompt)
                 .reprompt("Ask me about holidays.")
@@ -256,7 +260,7 @@ alexaApp.intent(
             timezone = tzVIC;
             calCheck = new VICHelper();
           }
-          
+
           moment.tz.setDefault(timezone);
           today = moment().tz(timezone);
           aDate = new AmazonDateParser(req.slot("DATE"));
@@ -307,7 +311,7 @@ alexaApp.intent(
     let prompt, reprompt;
     let today, calCheck;
     let timezone;
-    
+
     let db = new DBHelper();
 
     return db
@@ -347,15 +351,18 @@ alexaApp.intent(
             if (days.schoolDays < 0) {
               prompt = "Hmm, aren't you on holidays now?";
             } else if (days.totalDays > 14) {
-              prompt =
-                `There are ${Math.floor(days / 7)} weeks until the holidays.`;
+              prompt = `There are ${Math.floor(
+                days / 7
+              )} weeks until the holidays.`;
             } else if (days.totalDays > 7) {
-              prompt =
-                `There are only ${days.schoolDays} school days until the holidays. 
+              prompt = `There are only ${
+                days.schoolDays
+              } school days until the holidays.
                  You're going to make it!`;
             } else {
-              prompt =
-                `Almost there. Only ${days.schoolDays} more days until the holidays. 
+              prompt = `Almost there. Only ${
+                days.schoolDays
+              } more days until the holidays.
                  Can't you almost taste the freedom!`;
             }
             res.say(prompt).shouldEndSession(true);
@@ -405,7 +412,7 @@ alexaApp.intent(
     utterances: {}
   },
   function(req, res) {
-    var prompt = `This is the Aussie School Holidays Skill. 
+    var prompt = `This is the Aussie School Holidays Skill.
                   To change the state say 'change state'.
                   You can ask "is today a school day?" or,
                   "how long until the holidays?"`;
