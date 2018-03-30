@@ -348,7 +348,7 @@ alexaApp.intent(
           today = moment().tz(timezone);
 
           return calCheck.nextHoliday(today).then(function(days) {
-            if (days.schoolDays < 0) {
+            if (days.totalDays < 0) {
               prompt = "Hmm, aren't you on holidays now?";
             } else if (days.totalDays > 14) {
               prompt = `There are ${Math.floor(

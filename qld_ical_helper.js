@@ -195,7 +195,11 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
         let termEndsRE = new RegExp("(end|finish)", "i");
 
         if (termEndsRE.test(preTitle)) {
-          resolve(-1); //It's holidays now!
+          howLong = {
+            totalDays: -1,
+            schoolDays: -1
+          };
+          resolve(howLong); //It's holidays now!
           return;
         } else if (termEndsRE.test(postTitle)) {
           nextHoliday = bounds.post.start;
