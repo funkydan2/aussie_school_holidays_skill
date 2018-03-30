@@ -166,7 +166,7 @@ NSW_iCal_Helper.prototype.nextHoliday = function(date) {
     Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
       .then(function(calendars) {
         let termEnd = getTermEnd(calendars[1], r, date);
-        howLong.totalDays = moment(termEnd).diff(date, "days")+1;
+        howLong.totalDays = moment(termEnd).diff(date, "days") + 1;
 
         let d = date;
         while (moment(d).isSameOrBefore(termEnd)) {

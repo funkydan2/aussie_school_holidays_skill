@@ -1,14 +1,12 @@
 {
   "name": "aus-school-cal",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Alexa skill with information about school holidays.",
   "scripts": {
     "test": "mocha",
     "start": "node index.js"
   },
-  "keywords": [
-    "iCal"
-  ],
+  "keywords": ["iCal"],
   "author": "Daniel Saunders",
   "license": "MIT",
   "dependencies": {

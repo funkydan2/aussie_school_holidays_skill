@@ -206,7 +206,7 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
         }
 
         nextHoliday = moment(nextHoliday).add(1, "days");
-        howLong.totalDays = moment(nextHoliday).diff(date, "days")+1;
+        howLong.totalDays = moment(nextHoliday).diff(date, "days") + 1;
 
         //Calculate the number of School Days
         let d = date;
