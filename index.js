@@ -409,7 +409,7 @@ alexaApp.intent(
   "AMAZON.HelpIntent",
   {
     slots: {},
-    utterances: {}
+    utterances: []
   },
   function(req, res) {
     var prompt = `This is the Aussie School Holidays Skill.
