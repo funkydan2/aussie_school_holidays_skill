@@ -12,7 +12,7 @@
   "author": "Daniel Saunders",
   "license": "MIT",
   "dependencies": {
-    "alexa-app": "^4.2.1",
+    "alexa-app": "^4.2.2",
     "amazon-date-parser": "^0.2.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
