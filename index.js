@@ -3,8 +3,7 @@ module.change_code = 1;
 var _ = require("lodash");
 var express = require("express");
 var alexa = require("alexa-app");
-var moment = require("moment");
-require("moment-timezone");
+var moment = require("moment-timezone");
 var AmazonDateParser = require("amazon-date-parser");
 
 var app = express();
@@ -352,7 +351,7 @@ alexaApp.intent(
               prompt = "Hmm, aren't you on holidays now?";
             } else if (days.totalDays > 14) {
               prompt = `There are ${Math.floor(
-                days / 7
+                days.totalDays / 7
               )} weeks until the holidays.`;
             } else if (days.totalDays > 7) {
               prompt = `There are only ${

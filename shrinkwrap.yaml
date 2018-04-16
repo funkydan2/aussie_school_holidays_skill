@@ -1,15 +1,15 @@
 dependencies:
-  alexa-app: 4.2.1
+  alexa-app: 4.2.2
   amazon-date-parser: 0.2.0
   chai: 4.1.2
   chai-as-promised: 7.1.1
-  ejs: 2.5.7
+  ejs: 2.5.8
   express: 4.16.3
   http-request: 0.7.0
   ical: 0.5.0
   lodash: 4.17.5
-  mocha: 5.0.4
-  moment: 2.21.0
+  mocha: 5.1.0
+  moment: 2.22.1
   moment-timezone: 0.5.14
   sqlite3: 4.0.0
 packages:
@@ -32,7 +32,7 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha1-63d99gEXI6OxTopywIBcjoZ0a9I=
-  /alexa-app/4.2.1:
+  /alexa-app/4.2.2:
     dependencies:
       '@types/chai-as-promised': 7.1.0
       alexa-utterances: 0.2.1
@@ -45,7 +45,7 @@ packages:
     engines:
       node: '>=1'
     resolution:
-      integrity: sha512-aMXWIeDW0sIyX9BDhCkgPNr5x+WfF78CKtznWRHyPakqwipHHLIuxSnvJg4R2ezo5ghQpmpadFV61QgRWEU6Fw==
+      integrity: sha512-T18MBc7wmGuFRHBcecRMTnFq4xPFfC07RKTIk0Fglho80II4zOgCqobafmPMChwgoUPMjA1BXMg5jRnSM6We8A==
   /alexa-utterances/0.2.1:
     dependencies:
       js-combinatorics: 0.5.3
@@ -61,7 +61,7 @@ packages:
       integrity: sha512-dBWmXmtK4HHdibu18csh7f9uOzMvsu55X7PoROfRntLRRSJI5faPnNp/K5oAKnA9A8SzOpZDTQ92FSXDX0RZQQ==
   /alexa-verifier/1.0.0:
     dependencies:
-      node-forge: 0.7.2
+      node-forge: 0.7.5
       validator: 9.4.1
     dev: false
     resolution:
@@ -345,12 +345,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
-  /ejs/2.5.7:
+  /ejs/2.5.8:
     dev: false
     engines:
       node: '>=0.10.0'
     resolution:
-      integrity: sha1-zIcsFoiArjxxiXYv1f/ACJbJUYo=
+      integrity: sha512-QIDZL54fyV8MDcAsO91BMH1ft2qGGaHIJsJIA/+t+7uvXol1dm413fPcUgUb4k8F/9457rx4/KFE4XfDifrQxQ==
   /encodeurl/1.0.2:
     dev: false
     engines:
@@ -754,7 +754,7 @@ packages:
       node: '>=4.0.0'
     resolution:
       integrity: sha512-RFf8VukMW+9mkvDx0h+6isddHkuOZsiXhCxEtopSQAb68PDzb6UAtI6HbrS63dNqOOoPv8TL3p30C55jaK2Usg==
-  /mocha/5.0.4:
+  /mocha/5.1.0:
     dependencies:
       browser-stdout: 1.3.1
       commander: 2.11.0
@@ -764,13 +764,14 @@ packages:
       glob: 7.1.2
       growl: 1.10.3
       he: 1.1.1
+      minimatch: 3.0.4
       mkdirp: 0.5.1
       supports-color: 4.4.0
     dev: false
     engines:
       node: '>= 4.0.0'
     resolution:
-      integrity: sha512-nMOpAPFosU1B4Ix1jdhx5e3q7XO55ic5a8cgYvW27CequcEY+BabS0kUVL1Cw1V5PuVHZWeNRWFLmEPexo79VA==
+      integrity: sha512-d6RWgYPILd+AoWVOxiD0UwUqRicnE1inTxMr40CXOgqYve1MvnKntoLAtLIcxjEeVjEoYYTe5QAq3mUc6/ySjQ==
   /moment-timezone/0.5.14:
     dependencies:
       moment: 2.21.0
@@ -781,6 +782,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-TCZ36BjURTeFTM/CwRcViQlfkMvL1/vFISuNLO5GkcVm1+QHfbSiNqZuWeMFjj1/3+uAjXswgRk30j1kkLYJBQ==
+  /moment/2.22.1:
+    dev: false
+    resolution:
+      integrity: sha512-shJkRTSebXvsVqk56I+lkb2latjBs8I+pc2TzWc545y2iFnSjm7Wg0QMh+ZWcdSLQyGEau5jI8ocnmkyTgr9YQ==
   /ms/2.0.0:
     dev: false
     resolution:
@@ -795,10 +800,10 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha1-KzJxhOiZIQEXeyhWP7XnECrNDKk=
-  /node-forge/0.7.2:
+  /node-forge/0.7.5:
     dev: false
     resolution:
-      integrity: sha512-XTBoBY8NoeGAqQywTM8BjBz/Ro37eTmVF657yf6JumfOhxW9eET43Hve5+6L4+lo3hTDx7kTbC1WfasTHinDpg==
+      integrity: sha512-MmbQJ2MTESTjt3Gi/3yG1wGpIMhUfcIypUCGtTizFR9IiccFwxSpfp0vtIZlkFclEqERemxfnSdZEMR9VqqEFQ==
   /node-uuid/1.4.8:
     deprecated: Use uuid module instead
     dev: false
@@ -1144,16 +1149,16 @@ registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 4
 shrinkwrapVersion: 3
 specifiers:
-  alexa-app: ^4.2.1
+  alexa-app: ^4.2.2
   amazon-date-parser: ^0.2.0
   chai: ^4.1.2
   chai-as-promised: ^7.1.1
-  ejs: ^2.5.7
+  ejs: ^2.5.8
   express: ^4.16.3
   http-request: ^0.7.0
   ical: ^0.5.0
   lodash: ^4.17.5
-  mocha: ^5.0.4
-  moment: ^2.21.0
+  mocha: ^5.1.0
+  moment: ^2.22.1
   moment-timezone: ^0.5.14
   sqlite3: ^4.0.0

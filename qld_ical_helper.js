@@ -10,7 +10,8 @@ and the code is inspired by https://github.com/semaja2/moment-holiday-australia
 "use strict";
 
 var _ = require("lodash");
-var moment = require("moment");
+var moment = require("moment-timezone");
+moment.tz.setDefault("Australia/Brisbane");
 
 var cached_calendar = require("./cached_calendar_helper.js");
 
@@ -61,10 +62,8 @@ function getTermBoundaries(schoolCalendar, date) {
       const termRE = RegExp("^term", "i");
       if (termRE.test(e.summary.val)) {
         if (moment(e.start).isSameOrBefore(date, "day")) {
-          if (
-            (_.isUndefined(preBoundary) ||
-              moment(preBoundary.start).isBefore(e.start),
-            "day")
+          if (_.isUndefined(preBoundary) ||
+              moment(preBoundary.start).isBefore(e.start,"day")
           ) {
             preBoundary = e;
           }
@@ -182,6 +181,8 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
   let holidayCal = new cached_calendar("QLD", "public");
   let schoolCal = new cached_calendar("QLD", "school");
 
+console.log("Date: ", date);
+  
   return new Promise(function(resolve, reject) {
     Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
       .then(function(values) {
@@ -193,6 +194,7 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
         let preTitle = bounds.pre.summary.val;
         let postTitle = bounds.post.summary.val;
         let termEndsRE = new RegExp("(end|finish)", "i");
+console.log("Term ends: ", bounds.post.start);
 
         if (termEndsRE.test(preTitle)) {
           howLong = {
