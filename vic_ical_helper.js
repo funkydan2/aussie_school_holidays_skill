@@ -9,7 +9,8 @@ Data is sourced from - https://www.vic.gov.au/calendar.html
 "use strict";
 
 var _ = require("lodash");
-var moment = require("moment");
+var moment = require("moment-timezone");
+moment.tz.setDefault("Australia/Melbourne");
 
 var cached_calendar = require("./cached_calendar_helper.js");
 

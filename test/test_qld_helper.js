@@ -54,9 +54,18 @@ describe("QSH iCal Helper", function() {
   });
   describe("#UntilHolidays", function() {
     context("from March 20 2018", function() {
-      it("returns 10:8", function() {
+      it("returns 11:8", function() {
         let d = new Date("2018-03-20");
-        let r = {'totalDays' : 10, 'schoolDays' : 8};
+        let r = {'totalDays' : 11, 'schoolDays' : 8};
+        return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
+      });
+    });
+  });
+  describe("#UntilHolidays", function() {
+    context("from April 17 2018", function() {
+      it("returns 75:52", function() {
+        let d = new Date("2018-04-17");
+        let r = {'totalDays' : 75, 'schoolDays' : 52};
         return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });

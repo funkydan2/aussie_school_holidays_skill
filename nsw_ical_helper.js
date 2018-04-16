@@ -8,7 +8,8 @@ under a Creative Commons By 4.0 license.
 "use strict";
 
 var _ = require("lodash");
-var moment = require("moment");
+var moment = require("moment-timezone");
+moment.tz.setDefault("Australia/Sydney");
 
 var cached_calendar = require("./cached_calendar_helper.js");
 
