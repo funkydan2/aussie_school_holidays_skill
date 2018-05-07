@@ -95,7 +95,6 @@ function getToday(schoolCalendar, date) {
 function holidayChecker(holidayCalendar, schoolCalendar, region, date) {
   let events, preEvent;
   let today, termRE, holRE;
-
   if (region == "eastern") {
     termRE = new RegExp("term.+students.+east", "i");
     holRE = new RegExp("holiday.+east", "i");
@@ -103,7 +102,6 @@ function holidayChecker(holidayCalendar, schoolCalendar, region, date) {
     termRE = new RegExp("term.+students.+west", "i");
     holRE = new RegExp("holiday.+west", "i");
   }
-
   //Check for weekend
   if (moment(date).day() == 0 || moment(date).day() == 6) {
     return true;

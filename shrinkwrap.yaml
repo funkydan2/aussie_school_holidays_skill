@@ -3,14 +3,14 @@ dependencies:
   amazon-date-parser: 0.2.0
   chai: 4.1.2
   chai-as-promised: 7.1.1
-  ejs: 2.5.8
+  ejs: 2.6.1
   express: 4.16.3
   http-request: 0.7.0
   ical: 0.5.0
-  lodash: 4.17.5
-  mocha: 5.1.0
+  lodash: 4.17.10
+  mocha: 5.1.1
   moment: 2.22.1
-  moment-timezone: 0.5.14
+  moment-timezone: 0.5.16
   sqlite3: 4.0.0
 packages:
   /@types/chai-as-promised/7.1.0:
@@ -345,12 +345,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
-  /ejs/2.5.8:
+  /ejs/2.6.1:
     dev: false
     engines:
       node: '>=0.10.0'
     resolution:
-      integrity: sha512-QIDZL54fyV8MDcAsO91BMH1ft2qGGaHIJsJIA/+t+7uvXol1dm413fPcUgUb4k8F/9457rx4/KFE4XfDifrQxQ==
+      integrity: sha512-0xy4A/twfrRCnkhfk8ErDi5DqdAsAqeGxht4xkCUrsvhhbQNs7E+4jV0CN7+NKIY0aHE72+XvqtBIXzD31ZbXQ==
   /encodeurl/1.0.2:
     dev: false
     engines:
@@ -692,6 +692,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
+  /lodash/4.17.10:
+    dev: false
+    resolution:
+      integrity: sha512-UejweD1pDoXu+AD825lWwp4ZGtSwgnpZxb3JDViD7StjQz+Nb/6l093lx4OQ0foGWNRoc19mWy7BzL+UAK2iVg==
   /lodash/4.17.5:
     dev: false
     resolution:
@@ -752,9 +756,10 @@ packages:
     dev: false
     engines:
       node: '>=4.0.0'
+    requiresBuild: true
     resolution:
       integrity: sha512-RFf8VukMW+9mkvDx0h+6isddHkuOZsiXhCxEtopSQAb68PDzb6UAtI6HbrS63dNqOOoPv8TL3p30C55jaK2Usg==
-  /mocha/5.1.0:
+  /mocha/5.1.1:
     dependencies:
       browser-stdout: 1.3.1
       commander: 2.11.0
@@ -771,17 +776,13 @@ packages:
     engines:
       node: '>= 4.0.0'
     resolution:
-      integrity: sha512-d6RWgYPILd+AoWVOxiD0UwUqRicnE1inTxMr40CXOgqYve1MvnKntoLAtLIcxjEeVjEoYYTe5QAq3mUc6/ySjQ==
-  /moment-timezone/0.5.14:
+      integrity: sha512-kKKs/H1KrMMQIEsWNxGmb4/BGsmj0dkeyotEvbrAuQ01FcWRLssUNXCEUZk6SZtyJBi6EE7SL0zDDtItw1rGhw==
+  /moment-timezone/0.5.16:
     dependencies:
-      moment: 2.21.0
+      moment: 2.22.1
     dev: false
     resolution:
-      integrity: sha1-TrOP+VOLgBCLpGekWPPtQmjM/LE=
-  /moment/2.21.0:
-    dev: false
-    resolution:
-      integrity: sha512-TCZ36BjURTeFTM/CwRcViQlfkMvL1/vFISuNLO5GkcVm1+QHfbSiNqZuWeMFjj1/3+uAjXswgRk30j1kkLYJBQ==
+      integrity: sha512-4d1l92plNNqnMkqI/7boWNVXJvwGL2WyByl1Hxp3h/ao3HZiAqaoQY+6KBkYdiN5QtNDpndq+58ozl8W4GVoNw==
   /moment/2.22.1:
     dev: false
     resolution:
@@ -1008,6 +1009,7 @@ packages:
     dependencies:
       nan: 2.9.2
     dev: false
+    requiresBuild: true
     resolution:
       integrity: sha512-6OlcAQNGaRSBLK1CuaRbKwlMFBb9DEhzmZyQP+fltNRF6XcIMpVIfXCBEcXPe1d4v9LnhkQUYkknDbA5JReqJg==
   /sshpk/1.13.1:
@@ -1146,19 +1148,19 @@ packages:
     resolution:
       integrity: sha1-pcbVMr5lbiPbgg77lDofBJmNY68=
 registry: 'https://registry.npmjs.org/'
-shrinkwrapMinorVersion: 4
+shrinkwrapMinorVersion: 5
 shrinkwrapVersion: 3
 specifiers:
   alexa-app: ^4.2.2
   amazon-date-parser: ^0.2.0
   chai: ^4.1.2
   chai-as-promised: ^7.1.1
-  ejs: ^2.5.8
+  ejs: ^2.6.1
   express: ^4.16.3
   http-request: ^0.7.0
   ical: ^0.5.0
-  lodash: ^4.17.5
-  mocha: ^5.1.0
+  lodash: ^4.17.10
+  mocha: ^5.1.1
   moment: ^2.22.1
-  moment-timezone: ^0.5.14
+  moment-timezone: ^0.5.16
   sqlite3: ^4.0.0
