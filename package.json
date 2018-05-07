@@ -16,14 +16,14 @@
     "amazon-date-parser": "^0.2.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "ejs": "^2.5.8",
+    "ejs": "^2.6.1",
     "express": "^4.16.3",
     "http-request": "^0.7.0",
     "ical": "^0.5.0",
-    "lodash": "^4.17.5",
-    "mocha": "^5.1.0",
+    "lodash": "^4.17.10",
+    "mocha": "^5.1.1",
     "moment": "^2.22.1",
-    "moment-timezone": "^0.5.14",
+    "moment-timezone": "^0.5.16",
     "sqlite3": "^4.0.0"
   }
 }
