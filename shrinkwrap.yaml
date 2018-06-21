@@ -1148,7 +1148,7 @@ packages:
     resolution:
       integrity: sha1-pcbVMr5lbiPbgg77lDofBJmNY68=
 registry: 'https://registry.npmjs.org/'
-shrinkwrapMinorVersion: 5
+shrinkwrapMinorVersion: 6
 shrinkwrapVersion: 3
 specifiers:
   alexa-app: ^4.2.2
