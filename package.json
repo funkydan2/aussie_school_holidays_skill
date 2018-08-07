@@ -9,6 +9,7 @@
   "keywords": [
     "iCal"
   ],
+  "engines": { "node": "10.x" },
   "author": "Daniel Saunders",
   "license": "MIT",
   "dependencies": {
