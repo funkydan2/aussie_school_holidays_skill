@@ -350,7 +350,7 @@ alexaApp.intent(
             if (days.totalDays < 0) {
               prompt = "Hmm, aren't you on holidays now?";
             } else if (days.totalDays > 14) {
-              prompt = `There are ${Math.floor(
+              prompt = `There are about ${Math.round(
                 days.totalDays / 7
               )} weeks until the holidays.`;
             } else if (days.totalDays > 7) {
