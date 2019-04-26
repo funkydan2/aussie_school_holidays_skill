@@ -3,11 +3,11 @@
 var ical = require("ical");
 var moment = require("moment");
 var fs = require("fs");
-var http = require("http-request");
+var got = require("got");
 
 const QHolCalURL = "http://public-holidays.dteoh.com/qld.ics";
 const QHolCalF = ".data/qld_public_holidays.ics";
-const QEdCalURL = "http://education.qld.gov.au/qld-school-holidays.ics";
+const QEdCalURL = "https://education.qld.gov.au/about/Documents/qld-school-holidays.ics";
 const QEdCalF = ".data/qld_school_holidays.ics";
 
 const NSWHolCalURL = "http://public-holidays.dteoh.com/nsw.ics";
@@ -19,28 +19,29 @@ const NSWEdCalF = ".data/nsw_school_holidays.ics";
 const VHolCalURL = "http://public-holidays.dteoh.com/vic.ics";
 const VHolCalF = ".data/vic_public_holidays.ics";
 const VEdCalURL =
-  "http://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics";
+  "https://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics";
 const VEdCalF = ".data/vic_school_holidays.ics";
 
 const PUBLIC = "public";
 const SCHOOL = "school";
 
 function updateCache(url, file) {
+  
   return new Promise(function(resolve, reject) {
-    http.get(url, file, function(err, result) {
-      if (err) {
-        console.error("http-get error: ", err);
-        reject(err);
-      } else {
-        //update timestamp!
-        fs.utimes(file, new Date(), new Date(), function(err) {
-          if (err) {
-            console.error("Timestamp error: ", err);
-          }
-        });
-        console.log("File downloaded at: " + result.file);
-        resolve(result.file);
-      }
+    
+    got.stream(url).pipe(fs.createWriteStream(file))
+    .on('error', function(err){
+      console.error("http-get error: ", err);
+      reject(err); })
+    .on('close', function(){
+      //update timestamp!
+      fs.utimes(file, new Date(), new Date(), function(err) {
+        if (err) {
+          console.error("Timestamp error: ", err);
+          reject(err);
+        }
+        resolve(true);
+      });
     });
   });
 }
