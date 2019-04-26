@@ -21,12 +21,12 @@
     "chai-as-promised": "^7.1.1",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "ical": "^0.5.0",
+    "ical": "^0.6.0",
     "lodash": "^4.17.11",
-    "mocha": "^5.2.0",
-    "moment": "^2.23.0",
-    "moment-timezone": "^0.5.23",
-    "sqlite3": "^4.0.4",
-    "got": "^9.4.0"
+    "mocha": "^6.1.4",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25",
+    "sqlite3": "^4.0.6",
+    "got": "^9.6.0"
   }
 }
