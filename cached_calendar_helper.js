@@ -13,13 +13,13 @@ const QEdCalF = ".data/qld_school_holidays.ics";
 const NSWHolCalURL = "http://public-holidays.dteoh.com/nsw.ics";
 const NSWHolCalF = ".data/nsw_public_holidays.ics";
 const NSWEdCalURL =
-  "https://education.nsw.gov.au/public-schools/going-to-a-public-school/media/documents/NSW-public-schools-term-dates-and-holidays_psnswtermdates@gmail.com.ics";
+  "https://education.nsw.gov.au/content/dam/main-education/public-schools/going-to-a-public-school/media/documents/NSW-public-schools-term-dates-and-holidays_psnswtermdates-gmail.com.ics";
 const NSWEdCalF = ".data/nsw_school_holidays.ics";
 
 const VHolCalURL = "http://public-holidays.dteoh.com/vic.ics";
 const VHolCalF = ".data/vic_public_holidays.ics";
 const VEdCalURL =
-  "https://www.vic.gov.au/themes/v6/images/VictoriaCalendar-SchoolsTerms.ics";
+  "https://calendar.google.com/calendar/ical/teg3ioau8grqdcs00vku8eefp4%40group.calendar.google.com/public/basic.ics";
 const VEdCalF = ".data/vic_school_holidays.ics";
 
 const PUBLIC = "public";

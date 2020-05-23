@@ -16,17 +16,17 @@
   "license": "MIT",
   "dependencies": {
     "alexa-app": "^4.2.3",
-    "amazon-date-parser": "^0.2.0",
+    "amazon-date-parser": "^0.3.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "ejs": "^2.6.2",
-    "express": "^4.16.4",
-    "ical": "^0.6.0",
+    "ejs": "^3.1.2",
+    "express": "^4.17.1",
+    "ical": "^0.8.0",
     "lodash": "^4.17.15",
-    "mocha": "^6.2.0",
+    "mocha": "^7.1.1",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.26",
-    "sqlite3": "^4.0.8",
-    "got": "^9.6.0"
+    "moment-timezone": "^0.5.27",
+    "sqlite3": "^4.2.0",
+    "got": "^11.0.2"
   }
 }

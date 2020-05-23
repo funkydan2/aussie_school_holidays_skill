@@ -26,16 +26,16 @@ describe("NSW iCal Helper", function() {
   });
   describe("#Holidays", function() {
     context("from the NSW School Holidays iCal", function() {
-      it("January 29 returns true", function() {
-        var d = new Date("2018-01-29");
+      it("January 24 returns true", function() {
+        var d = new Date("2020-01-24");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
       it("April 16 returns true", function() {
-        var d = new Date("2018-04-16");
+        var d = new Date("2020-04-16");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
       it("July 10 returns true", function() {
-        var d = new Date("2018-07-10");
+        var d = new Date("2020-07-10");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
     });
@@ -43,27 +43,27 @@ describe("NSW iCal Helper", function() {
   describe("#SchoolDays", function() {
     context("from the NSW School Holidays iCal", function() {
       it("March 29 returns false", function() {
-        var d = new Date("2018-03-29");
+        var d = new Date("2020-03-27");
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
       it("July 24 returns false", function() {
-        var d = new Date("2018-07-24");
+        var d = new Date("2020-07-24");
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
     });
   });
   describe("#UntilHolidays", function() {
-    context("from July 2 2018", function() {
+    context("from June 29 2020", function() {
       it("returns 6:5", function() {
-        var d = new Date("2018-07-02");
+        var d = new Date("2020-06-29");
         let r = { totalDays: 6, schoolDays: 5 };
         return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });
-    context("from April 2 2018", function() {
-      it("returns 13:9", function() {
-        var d = new Date("2018-04-02");
-        let r = { totalDays: 13, schoolDays: 9 };
+    context("from March 31 2020", function() {
+      it("returns 11:8", function() {
+        var d = new Date("2020-03-31");
+        let r = { totalDays: 11, schoolDays: 8 };
         return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });

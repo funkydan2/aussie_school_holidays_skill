@@ -16,3 +16,6 @@ Please use [github](https://github.com/funkydan2/aussie_school_holidays_skill/is
 ## Installation Instructions
 
 If you want to use this code on your own server, you need to kick things off by running `node install.js` to create the initial database.
+
+## Extra Tools
+[Open Web Calendar](https://openwebcalendar.herokuapp.com) is a online `.ics` viewer to help you examine the source calendars.

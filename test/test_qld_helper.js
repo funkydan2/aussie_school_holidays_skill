@@ -11,7 +11,7 @@ describe("QSH iCal Helper", function() {
   describe("#Saturday", function() {
     context("from date()", function() {
       it("returns true", function() {
-        var d = new Date("2018-02-03");
+        var d = new Date("2020-02-01");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
     });
@@ -19,53 +19,53 @@ describe("QSH iCal Helper", function() {
   describe("#Public Holiday", function() {
     context("from the Google Public Holiday Calendar", function() {
       it("returns true", function() {
-        var d = new Date("2017-01-01");
+        var d = new Date("2020-01-01");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
     });
   });
   describe("#Holidays", function() {
     context("from the QLD School Holidays iCal", function() {
-      it("April 1 returns true", function() {
-        var d = new Date("2018-04-11");
+      it("April 6 returns true", function() {
+        var d = new Date("2020-04-06");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
       it("April 9 returns true", function() {
-        var d = new Date("2018-04-09");
+        var d = new Date("2020-04-09");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
       it("July 3 returns true", function() {
-        var d = new Date("2018-07-03");
+        var d = new Date("2020-07-03");
         return expect(subject.isHoliday(d)).to.eventually.equal(true);
       });
     });
   });
   describe("#SchoolDays", function() {
     context("from the QLD School Holidays iCal", function() {
-      it("March 29 returns false", function() {
-        var d = new Date("2018-03-29");
+      it("March 27 returns false", function() {
+        var d = new Date("2020-03-27");
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
       it("July 16 returns false", function() {
-        let d = new Date("2018-07-16");
+        let d = new Date("2020-07-16");
         return expect(subject.isHoliday(d)).to.eventually.equal(false);
       });
     });
   });
   describe("#UntilHolidays", function() {
-    context("from March 20 2018", function() {
-      it("returns 11:8", function() {
-        let d = new Date("2018-03-20");
-        let r = {'totalDays' : 11, 'schoolDays' : 8};
+    context("from March 20 2020", function() {
+      it("returns 16:11", function() {
+        let d = new Date("2020-03-20");
+        let r = {'totalDays' : 16, 'schoolDays' : 11};
         return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });
   });
   describe("#UntilHolidays", function() {
-    context("from April 17 2018", function() {
-      it("returns 75:52", function() {
-        let d = new Date("2018-04-17");
-        let r = {'totalDays' : 75, 'schoolDays' : 52};
+    context("from April 21 2020", function() {
+      it("returns 68:48", function() {
+        let d = new Date("2020-04-21");
+        let r = {'totalDays' : 68, 'schoolDays' : 48};
         return expect(subject.nextHoliday(d)).to.eventually.deep.equal(r);
       });
     });
