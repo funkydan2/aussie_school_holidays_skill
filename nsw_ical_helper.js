@@ -113,7 +113,7 @@ function holidayChecker(holidayCalendar, schoolCalendar, region, date) {
     console.log("It's ", preEvent.summary, "!");
     return true;
   }
-
+  
   //Check school calendar - what kind of day is it?
   events = getToday(schoolCalendar, date);
   for (var i = 0; i < events.length; i++) {

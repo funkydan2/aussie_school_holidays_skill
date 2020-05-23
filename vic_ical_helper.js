@@ -51,6 +51,44 @@ function getPrePostEvents(cal, date) {
   };
 }
 
+function getTermEnd(schoolCalendar, date) {
+  let termRE;
+  let termEnd;
+
+  termRE = new RegExp("term", "i");
+  
+  for (var key in schoolCalendar) {
+    if (schoolCalendar.hasOwnProperty(key)) {
+      var e = schoolCalendar[key];
+      if (termRE.test(e.summary)) {
+        if (moment(e.end).isSameOrAfter(date, "day")) {
+          if (_.isUndefined(termEnd)) {
+            termEnd = e.end;
+          } else if (moment(e.end).isBefore(termEnd)) {
+            termEnd = e.end;
+          }
+        }
+      }
+    }
+  }
+  return termEnd;
+}
+
+function getToday(schoolCalendar, date) {
+  var dateEvents = [];
+  //This function returns an array with all the events on date.
+  for (var key in schoolCalendar) {
+    if (schoolCalendar.hasOwnProperty(key)) {
+      let e = schoolCalendar[key];
+
+      if (moment(date).isBetween(e.start, e.end)) {
+        dateEvents.push(e.summary);
+      }
+    }
+  }
+  return dateEvents;
+}
+
 function getTermBoundaries(schoolCalendar, date) {
   let bounds = {};
   let preBoundary, postBoundary;
@@ -89,44 +127,35 @@ function getTermBoundaries(schoolCalendar, date) {
 }
 
 function holidayChecker(holidayCalendar, schoolCalendar, date) {
-  const termRE = new RegExp("term", "i");
-  const termStartRE = new RegExp("(starts|begins)", "i");
-  const termEndRE = new RegExp("(ends|finishes)", "i");
-
-  let events, preEvent, postEvent;
-  let preTitle, postTitle;
-
-  let cc = new cached_calendar();
-
-  //Check if it's a weekend.
-
+  let events, preEvent;
+  let today, termRE, holRE;
+  
+  termRE = new RegExp("term", "i");
+  holRE = new RegExp("school holidays", "i");
+  
+  //Check for weekend
   if (moment(date).day() == 0 || moment(date).day() == 6) {
     return true;
   }
-
-  //Check if it's a public holidays
+  
+  //Check for public holidays
   events = getPrePostEvents(holidayCalendar, date);
-
   preEvent = events.pre;
   if (moment(preEvent.start).isSame(date, "day")) {
     console.log("It's ", preEvent.summary, "!");
     return true;
   }
-
-  //Check if it's outside of term time
-  let b = getTermBoundaries(schoolCalendar, date);
-  //Now check whether DATE is inside or outside of term boundaries
-  preTitle = b.pre.summary;
-  postTitle = b.post.summary;
-  if (termStartRE.test(preTitle) && termEndRE.test(postTitle)) {
-    //It's term time.
-    return false;
-  } else if (termEndRE.test(preTitle) && termStartRE.test(postTitle)) {
-    //Holiday time!
-    return true;
-  } else {
-    return false;
+  
+  //Check school calendar - what kind of day is it?
+  events = getToday(schoolCalendar, date);
+  for (var i = 0; i < events.length; i++) {
+    if (holRE.test(events[i])) {
+      return true;
+    } else if (termRE.test(events[i])) {
+      return false;
+    }
   }
+  return false;
 }
 
 function VSH_iCal_Helper() {}
@@ -161,49 +190,27 @@ VSH_iCal_Helper.prototype.nextHoliday = function(date) {
 
   return new Promise(function(resolve, reject) {
     Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
-      .then(function(values) {
-        let holidayCal = values[0];
-        let schoolCal = values[1];
-        let bounds = getTermBoundaries(schoolCal, date);
+      .then(function(calendars) {
+        let termEnd = getTermEnd(calendars[1], date);
+        howLong.totalDays = moment(termEnd).diff(date, "days") + 1;
 
-        let nextHoliday;
-        let preTitle = bounds.pre.summary;
-        let postTitle = bounds.post.summary;
-        let termEndsRE = new RegExp("(end|finish)", "i");
-
-        if (termEndsRE.test(preTitle)) {
-          howLong = {
-            totalDays: -1,
-            schoolDays: -1
-          };
-          resolve(howLong); //It's holidays now!
-          return;
-        } else if (termEndsRE.test(postTitle)) {
-          nextHoliday = bounds.post.start;
-        }
-
-        nextHoliday = moment(nextHoliday).add(1, "days");
-        howLong.totalDays = moment(nextHoliday).diff(date, "days") + 1;
-
-        //Calculate the number of School Days
         let d = date;
-        while (moment(d).isSameOrBefore(nextHoliday)) {
-          if (!holidayChecker(holidayCal, schoolCal, d)) {
+        while (moment(d).isSameOrBefore(termEnd)) {
+          if (!holidayChecker(calendars[0], calendars[1], d)) {
             howLong.schoolDays++;
           }
-
           d = moment(d).add(1, "days");
         }
 
         resolve(howLong);
-        return;
       })
       .catch(function(error) {
         console.log("Failed: ", error);
         reject(error);
-        return;
       });
   });
+
+
 };
 
 module.exports = VSH_iCal_Helper;

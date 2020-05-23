@@ -60,20 +60,22 @@ function getTermBoundaries(schoolCalendar, date) {
     if (schoolCalendar.hasOwnProperty(key)) {
       let e = schoolCalendar[key];
       const termRE = RegExp("^term", "i");
-      if (termRE.test(e.summary.val)) {
-        if (moment(e.start).isSameOrBefore(date, "day")) {
-          if (_.isUndefined(preBoundary) ||
-              moment(preBoundary.start).isBefore(e.start,"day")
-          ) {
-            preBoundary = e;
+      if (e.type == 'VEVENT') {
+        if (termRE.test(e.summary)) {
+          if (moment(e.start).isSameOrBefore(date, "day")) {
+            if (_.isUndefined(preBoundary) ||
+                moment(preBoundary.start).isBefore(e.start,"day")
+            ) {
+              preBoundary = e;
+            }
           }
-        }
-        if (moment(e.start).isSameOrAfter(date, "day")) {
-          if (
-            _.isUndefined(postBoundary) ||
-            moment(postBoundary.start).isAfter(e.start, "day")
-          ) {
-            postBoundary = e;
+          if (moment(e.start).isSameOrAfter(date, "day")) {
+            if (
+              _.isUndefined(postBoundary) ||
+              moment(postBoundary.start).isAfter(e.start, "day")
+            ) {
+              postBoundary = e;
+            }
           }
         }
       }
@@ -119,8 +121,8 @@ function holidayChecker(holidayCalendar, schoolCalendar, date) {
   preEvent = events.pre;
   postEvent = events.post;
 
-  preTitle = preEvent.summary.val;
-  postTitle = postEvent.summary.val;
+  preTitle = preEvent.summary;
+  postTitle = postEvent.summary;
 
   if (moment(preEvent.start).isSame(date, "day")) {
     console.log(preTitle);
@@ -138,8 +140,8 @@ function holidayChecker(holidayCalendar, schoolCalendar, date) {
   //Check if it's outside of term time
   let b = getTermBoundaries(schoolCalendar, date);
   //Now check whether DATE is inside or outside of term boundaries
-  preTitle = b.pre.summary.val;
-  postTitle = b.post.summary.val;
+  preTitle = b.pre.summary;
+  postTitle = b.post.summary;
   if (termStartRE.test(preTitle) && termEndRE.test(postTitle)) {
     //It's term time.
     return false;
@@ -181,7 +183,6 @@ QSH_iCal_Helper.prototype.nextHoliday = function(date) {
   let holidayCal = new cached_calendar("QLD", "public");
   let schoolCal = new cached_calendar("QLD", "school");
 
-console.log("Date: ", date);
   
   return new Promise(function(resolve, reject) {
     Promise.all([holidayCal.getCalendar(), schoolCal.getCalendar()])
@@ -191,10 +192,9 @@ console.log("Date: ", date);
         let bounds = getTermBoundaries(schoolCal, date);
 
         let nextHoliday;
-        let preTitle = bounds.pre.summary.val;
-        let postTitle = bounds.post.summary.val;
+        let preTitle = bounds.pre.summary;
+        let postTitle = bounds.post.summary;
         let termEndsRE = new RegExp("(end|finish)", "i");
-console.log("Term ends: ", bounds.post.start);
 
         if (termEndsRE.test(preTitle)) {
           howLong = {
