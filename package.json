@@ -10,23 +10,23 @@
     "iCal"
   ],
   "engines": {
-    "node": "10.x"
+    "node": "12.x"
   },
   "author": "Daniel Saunders",
   "license": "MIT",
   "dependencies": {
     "alexa-app": "^4.2.3",
     "amazon-date-parser": "^0.3.0",
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "ejs": "^3.1.2",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "ical": "^0.8.0",
-    "lodash": "^4.17.15",
-    "mocha": "^7.1.1",
-    "moment": "^2.24.0",
-    "moment-timezone": "^0.5.27",
-    "sqlite3": "^4.2.0",
-    "got": "^11.0.2"
+    "lodash": "^4.17.21",
+    "mocha": "^9.1.3",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34",
+    "sqlite3": "^5.0.2",
+    "got": "^11.8.3"
   }
 }
