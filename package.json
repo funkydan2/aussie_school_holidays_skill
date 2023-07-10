@@ -10,7 +10,7 @@
     "iCal"
   ],
   "engines": {
-    "node": "14.x"
+    "node": "12.x"
   },
   "author": "Daniel Saunders",
   "license": "MIT",
@@ -21,12 +21,12 @@
     "chai-as-promised": "^7.1.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "got": "^11.8.6",
     "ical": "^0.8.0",
     "lodash": "^4.17.21",
     "mocha": "^10.2.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "got": "^11.8.6"
   }
 }
