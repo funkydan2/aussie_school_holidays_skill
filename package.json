@@ -17,8 +17,8 @@
   "dependencies": {
     "alexa-app": "^4.2.3",
     "amazon-date-parser": "^0.3.0",
-    "chai": "^5.1.0",
-    "chai-as-promised": "^7.1.1",
+    "chai": "^5.1.1",
+    "chai-as-promised": "^8.0.0",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "ical": "^0.8.0",
