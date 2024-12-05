@@ -17,15 +17,15 @@
   "dependencies": {
     "alexa-app": "^4.2.3",
     "amazon-date-parser": "^0.3.0",
-    "chai": "^5.1.1",
-    "chai-as-promised": "^8.0.0",
+    "chai": "^5.1.2",
+    "chai-as-promised": "^8.0.1",
     "ejs": "^3.1.10",
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "ical": "^0.8.0",
     "lodash": "^4.17.21",
-    "mocha": "^10.4.0",
+    "mocha": "^10.8.2",
     "moment": "^2.30.1",
-    "moment-timezone": "^0.5.45",
+    "moment-timezone": "^0.5.46",
     "sqlite3": "^5.1.7",
     "got": "^11.8.6"
   }
