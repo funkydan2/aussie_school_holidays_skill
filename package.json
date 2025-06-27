@@ -10,7 +10,7 @@
     "iCal"
   ],
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   },
   "author": "Daniel Saunders",
   "license": "MIT",
